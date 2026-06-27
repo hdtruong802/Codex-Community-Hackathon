@@ -23,42 +23,6 @@ const STATIC_CHARACTERS = {
     ],
     color: '#ef4444'
   },
-  nguyen_trai: {
-    name: 'Nguyễn Trãi',
-    emoji: '📝',
-    period: 'Thế kỷ XV · Nhà Hậu Lê',
-    shortBio: 'Khai quốc công thần nhà Hậu Lê, danh nhân văn hóa thế giới, tác giả của Bình Ngô Đại Cáo. Nhà quân sự thiên tài với tư tưởng lấy "nhân nghĩa" làm gốc.',
-    suggestedQuestions: [
-      'Mưu phạt tâm công nghĩa là đánh vào lòng người như thế nào?',
-      'Hoàn cảnh ra đời của bài Bình Ngô Đại Cáo?',
-      'Nỗi lòng của Ngài gửi gắm qua Quốc âm thi tập?'
-    ],
-    color: '#3b82f6'
-  },
-  ho_xuan_huong: {
-    name: 'Hồ Xuân Hương',
-    emoji: '🌸',
-    period: 'Thế kỷ XVIII-XIX · Lê Trung Hưng - Nguyễn',
-    shortBio: 'Nữ thi sĩ kiệt xuất được mệnh danh là "Bà chúa thơ Nôm". Thơ của bà mang phong cách trào phúng châm biếm sâu cay, bênh vực người phụ nữ.',
-    suggestedQuestions: [
-      'Ý nghĩa ẩn dụ trong bài thơ Bánh trôi nước là gì?',
-      'Nỗi lòng riêng tư của bà gửi gắm trong thơ Tự tình?',
-      'Làm thế nào bà vượt qua được định kiến xã hội thời bấy giờ?'
-    ],
-    color: '#ec4899'
-  },
-  nguyen_du: {
-    name: 'Nguyễn Du',
-    emoji: '📜',
-    period: 'Thế kỷ XVIII-XIX · Nhà Nguyễn',
-    shortBio: 'Đại thi hào dân tộc, danh nhân văn hóa thế giới, tác giả kiệt tác Truyện Kiều. Thơ của ông chan chứa tinh thần nhân đạo và lòng trắc ẩn.',
-    suggestedQuestions: [
-      'Cảm hứng nào giúp cụ viết nên kiệt tác Truyện Kiều?',
-      'Ý nghĩa hai chữ "bể dâu" cụ thường nhắc tới là gì?',
-      'Tấm lòng cụ dành cho kiếp người bất hạnh qua Văn tế thập loại chúng sinh?'
-    ],
-    color: '#f59e0b'
-  },
   ly_thuong_kiet: {
     name: 'Lý Thường Kiệt',
     emoji: '🏛️',
@@ -70,6 +34,18 @@ const STATIC_CHARACTERS = {
       'Ngài xây dựng chiến tuyến sông Cầu phòng thủ ra sao?'
     ],
     color: '#10b981'
+  },
+  nguyen_thi_binh: {
+    name: 'Nguyễn Thị Bình',
+    emoji: '🕊️',
+    period: 'Thế kỷ XX-XXI · Ngoại giao Việt Nam',
+    shortBio: 'Nhà ngoại giao tiêu biểu của Việt Nam, Trưởng đoàn đàm phán Chính phủ Cách mạng lâm thời Cộng hòa miền Nam Việt Nam tại Hội nghị Paris, người ký Hiệp định Paris năm 1973.',
+    suggestedQuestions: [
+      'Điều gì khó nhất trong quá trình đàm phán Hiệp định Paris?',
+      'Bài học ngoại giao lớn nhất từ Hội nghị Paris là gì?',
+      'Vai trò của phụ nữ Việt Nam trên mặt trận ngoại giao được thể hiện ra sao?'
+    ],
+    color: '#06b6d4'
   }
 };
 
@@ -177,7 +153,7 @@ export default function ChatPage({ params }) {
               <div style={styles.emptyIcon}>📜</div>
               <h3 style={{ marginBottom: '0.5rem' }}>Đàm đạo cùng {character.name}</h3>
               <p style={{ color: 'var(--text-secondary)', maxWidth: '400px', fontSize: '0.82rem' }}>
-                Hãy bắt đầu bằng cách gõ câu hỏi hoặc chọn một trong các gợi ý bên dưới để tìm hiểu về cuộc đời của Ngài.
+                Hãy bắt đầu bằng cách gõ câu hỏi hoặc chọn một trong các gợi ý bên dưới để tìm hiểu về cuộc đời và di sản của nhân vật.
               </p>
             </div>
           ) : (

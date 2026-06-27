@@ -2,7 +2,7 @@
 
 > Lịch sử Việt Nam không nằm trong sách giáo khoa bám bụi, nó sống động trong mỗi cuộc hội thoại.
 
-**SửViệtAI** là một ứng dụng chat AI mô phỏng các nhân vật lịch sử Việt Nam, giúp học sinh và người đam mê lịch sử có thể trò chuyện trực tiếp với những danh tướng, thi sĩ và nhà tư tưởng lỗi lạc của dân tộc.
+**SửViệtAI** là một ứng dụng chat AI mô phỏng các nhân vật lịch sử Việt Nam, giúp học sinh và người đam mê lịch sử có thể trò chuyện trực tiếp với những gương mặt tiêu biểu của dân tộc trên các mặt trận quân sự, chủ quyền và ngoại giao.
 
 Dự án được xây dựng cho **Codex Community Hackathon 2026** (Track 3: IMPACT to Vietnam).
 
@@ -11,12 +11,10 @@ Dự án được xây dựng cho **Codex Community Hackathon 2026** (Track 3: I
 ## 🎨 Tính năng nổi bật
 
 1. **Trò chuyện trực tiếp (SSE Streaming)**: Phản hồi từ nhân vật lịch sử được stream theo thời gian thực (hiển thị từng từ) tạo cảm giác như nhân vật đang trả lời trực tiếp.
-2. **5 Persona Nhân vật Lịch sử độc đáo**:
+2. **3 Persona Nhân vật Lịch sử cho bản demo**:
    - ⚔️ **Trần Hưng Đạo** (Nhà quân sự vĩ đại)
-   - 📝 **Nguyễn Trãi** (Nhà khai quốc công thần, nhà thơ lớn)
-   - 🌸 **Hồ Xuân Hương** (Bà chúa thơ Nôm)
-   - 📜 **Nguyễn Du** (Đại thi hào dân tộc)
    - 🏛️ **Lý Thường Kiệt** (Danh tướng nhà Lý)
+   - 🕊️ **Nguyễn Thị Bình** (Nhà ngoại giao, đại diện tại Hội nghị Paris)
 3. **Gợi ý câu hỏi**: Mỗi nhân vật có các gợi ý câu hỏi liên quan đến cuộc đời và sự nghiệp để bắt đầu cuộc trò chuyện.
 4. **Trích dẫn Sử liệu**: Mỗi phản hồi từ nhân vật đều đính kèm nguồn trích dẫn sử liệu cụ thể ở cuối để đảm bảo tính giáo dục và chính xác.
 5. **Giao diện tối (Premium Dark Theme)**: Thiết kế hiện đại với hiệu ứng ánh sáng kính mờ (glassmorphism) và màu sắc đặc trưng cho từng nhân vật.

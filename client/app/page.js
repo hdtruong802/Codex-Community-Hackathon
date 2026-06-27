@@ -17,33 +17,6 @@ const STATIC_CHARACTERS = [
     color: '#ef4444'
   },
   {
-    id: 'nguyen_trai',
-    name: 'Nguyễn Trãi',
-    emoji: '📝',
-    period: 'Thế kỷ XV · Nhà Hậu Lê',
-    shortBio: 'Khai quốc công thần nhà Hậu Lê, danh nhân văn hóa thế giới, tác giả của Bình Ngô Đại Cáo. Nhà quân sự thiên tài với tư tưởng lấy "nhân nghĩa" làm gốc.',
-    topics: ['Nhân nghĩa', 'Mưu phạt tâm công', 'Văn học'],
-    color: '#3b82f6'
-  },
-  {
-    id: 'ho_xuan_huong',
-    name: 'Hồ Xuân Hương',
-    emoji: '🌸',
-    period: 'Thế kỷ XVIII-XIX · Lê Trung Hưng - Nguyễn',
-    shortBio: 'Nữ thi sĩ kiệt xuất được mệnh danh là "Bà chúa thơ Nôm". Thơ của bà mang phong cách trào phúng châm biếm sâu cay, bênh vực người phụ nữ.',
-    topics: ['Thơ Nôm', 'Trào phúng', 'Quyền phụ nữ'],
-    color: '#ec4899'
-  },
-  {
-    id: 'nguyen_du',
-    name: 'Nguyễn Du',
-    emoji: '📜',
-    period: 'Thế kỷ XVIII-XIX · Nhà Nguyễn',
-    shortBio: 'Đại thi hào dân tộc, danh nhân văn hóa thế giới, tác giả kiệt tác Truyện Kiều. Thơ của ông chan chứa tinh thần nhân đạo và lòng trắc ẩn.',
-    topics: ['Truyện Kiều', 'Nhân đạo', 'Bể dâu cuộc đời'],
-    color: '#f59e0b'
-  },
-  {
     id: 'ly_thuong_kiet',
     name: 'Lý Thường Kiệt',
     emoji: '🏛️',
@@ -51,6 +24,15 @@ const STATIC_CHARACTERS = [
     shortBio: 'Thái úy danh tướng nhà Lý, người đánh bại đại quân nhà Tống xâm lược. Ông gắn liền với bài thơ Nam quốc sơn hà - tuyên ngôn độc lập đầu tiên.',
     topics: ['Nam quốc sơn hà', 'Tiên phát chế nhân', 'Phòng ngự sông Cầu'],
     color: '#10b981'
+  },
+  {
+    id: 'nguyen_thi_binh',
+    name: 'Nguyễn Thị Bình',
+    emoji: '🕊️',
+    period: 'Thế kỷ XX-XXI · Ngoại giao Việt Nam',
+    shortBio: 'Nhà ngoại giao tiêu biểu của Việt Nam, Trưởng đoàn đàm phán Chính phủ Cách mạng lâm thời Cộng hòa miền Nam Việt Nam tại Hội nghị Paris, người ký Hiệp định Paris năm 1973.',
+    topics: ['Hiệp định Paris', 'Ngoại giao', 'Hòa bình'],
+    color: '#06b6d4'
   }
 ];
 
@@ -91,7 +73,7 @@ export default function Home() {
           <span style={styles.purpleText}>Nhân vật Lịch sử</span> Việt Nam
         </h1>
         <p style={styles.heroSub}>
-          Tìm hiểu nguồn cội dân tộc bằng cách đàm đạo với những anh hùng hào kiệt, văn nhân tài hoa qua mô phỏng trí tuệ nhân tạo.
+          Tìm hiểu nguồn cội dân tộc bằng cách đàm đạo với những nhân vật tiêu biểu trên các mặt trận quân sự, chủ quyền và ngoại giao qua mô phỏng trí tuệ nhân tạo.
         </p>
       </section>
 
@@ -100,7 +82,7 @@ export default function Home() {
       {/* CHARACTER GRID */}
       <div style={styles.gridHeader}>
         <h2 style={styles.gridTitle}>📜 Chọn nhân vật lịch sử</h2>
-        <p style={styles.gridDesc}>Nhấp vào nhân vật để bắt đầu hành trình đàm đạo văn chương và quân sự.</p>
+        <p style={styles.gridDesc}>Nhấp vào nhân vật để bắt đầu hành trình đàm đạo về giữ nước, chủ quyền và hòa bình.</p>
       </div>
 
       <div style={styles.grid}>
