@@ -5,6 +5,7 @@ export default function SuggestedQuestions({ questions, onSelect, color, disable
   if (!questions || questions.length === 0) return null;
 
   return (
+<<<<<<< HEAD
     <div className="suggested-questions">
       <span className="suggested-questions__label">Gợi ý câu hỏi</span>
       <div className="chip-row">
@@ -23,6 +24,24 @@ export default function SuggestedQuestions({ questions, onSelect, color, disable
           >
             {question}
           </Button>
+=======
+    <div className="suggested-container">
+      <span className="suggested-label">
+        💡 Hỏi nhân vật:
+      </span>
+      <div className="suggested-chips">
+        {questions.map((question, index) => (
+          <button
+            key={index}
+            className="suggested-chip"
+            onClick={() => onSelect(question)}
+            style={{
+              animationDelay: `${index * 0.08}s`
+            }}
+          >
+            {question}
+          </button>
+>>>>>>> main
         ))}
       </div>
     </div>

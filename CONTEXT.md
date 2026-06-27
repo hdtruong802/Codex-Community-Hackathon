@@ -1,6 +1,6 @@
 # SửViệtAI — Shared Project Context (Shared Brain)
 
-Dự án chatbot mô phỏng 3 nhân vật lịch sử Việt Nam dành cho **Codex Community Hackathon 2026** (Track 3: IMPACT to Vietnam): Trần Hưng Đạo, Lý Thường Kiệt và Nguyễn Thị Bình.
+Dự án chatbot mô phỏng 3 nhân vật lịch sử Việt Nam dành cho **Codex Community Hackathon 2026** (Track 3: IMPACT to Vietnam): Trần Hưng Đạo, Lý Thường Kiệt và Hồ Xuân Hương.
 
 ---
 

@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { API_BASE_URL } from '@/utils/api';
 
+<<<<<<< HEAD
 const normalizeSources = (value) => {
   if (!Array.isArray(value)) return [];
   return value
@@ -11,16 +12,29 @@ const normalizeSources = (value) => {
       confidence: source.confidence ? String(source.confidence) : undefined,
       timePeriod: source.timePeriod ? String(source.timePeriod) : undefined
     }));
+=======
+const createSessionId = () => {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 12)}`;
+>>>>>>> main
 };
 
 export default function useChat(characterId) {
   const [messages, setMessages] = useState([]);
   const [currentResponse, setCurrentResponse] = useState('');
   const [currentSources, setCurrentSources] = useState([]);
+<<<<<<< HEAD
+=======
+  const [currentGuardrail, setCurrentGuardrail] = useState(null);
+>>>>>>> main
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState(null);
   const [lastFailedMessage, setLastFailedMessage] = useState(null);
   const abortControllerRef = useRef(null);
+  const sessionIdRef = useRef(createSessionId());
+  const previousCharacterIdRef = useRef(characterId);
 
   const sendMessage = useCallback(async (text) => {
     if (!text?.trim() || isStreaming || !characterId) return;
@@ -36,9 +50,14 @@ export default function useChat(characterId) {
     setIsStreaming(true);
     setCurrentResponse('');
     setCurrentSources([]);
+<<<<<<< HEAD
+=======
+    setCurrentGuardrail(null);
+
+    const newMessages = [...messages, { role: 'user', content: text }];
+>>>>>>> main
     setMessages(newMessages);
 
-    // Setup abort controller to allow cancelling request on unmount
     const controller = new AbortController();
     abortControllerRef.current = controller;
 
@@ -46,7 +65,11 @@ export default function useChat(characterId) {
       const response = await fetch(`${API_BASE_URL}/api/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ characterId, messages: newMessages }),
+        body: JSON.stringify({
+          characterId,
+          sessionId: sessionIdRef.current,
+          messages: newMessages
+        }),
         signal: controller.signal
       });
 
@@ -61,11 +84,56 @@ export default function useChat(characterId) {
       const reader = response.body.getReader();
       const decoder = new TextDecoder('utf-8');
       let finished = false;
+<<<<<<< HEAD
       let bufferedText = '';
+=======
+      let accumulatedText = '';
+      let accumulatedSources = [];
+      let accumulatedGuardrail = null;
+      let sseBuffer = '';
+
+      const handleSsePayload = (rawData) => {
+        if (rawData === '[DONE]') {
+          finished = true;
+          return;
+        }
+
+        const parsed = JSON.parse(rawData);
+        if (parsed.error) {
+          throw new Error(parsed.error);
+        }
+        if (parsed.text) {
+          accumulatedText += parsed.text;
+          setCurrentResponse(accumulatedText);
+        }
+        if (Array.isArray(parsed.sources)) {
+          accumulatedSources = parsed.sources;
+          setCurrentSources(accumulatedSources);
+        }
+        if (parsed.guardrail) {
+          accumulatedGuardrail = parsed.guardrail;
+          setCurrentGuardrail(accumulatedGuardrail);
+        }
+      };
+
+      const handleSseEvents = (events) => {
+        for (const event of events) {
+          const dataLines = event
+            .split('\n')
+            .filter((line) => line.startsWith('data: '))
+            .map((line) => line.slice(6).trim());
+
+          if (dataLines.length) {
+            handleSsePayload(dataLines.join('\n'));
+          }
+        }
+      };
+>>>>>>> main
 
       while (!finished) {
         const { value, done } = await reader.read();
         finished = done;
+<<<<<<< HEAD
         if (value) {
           bufferedText += decoder.decode(value, { stream: true });
           const lines = bufferedText.split('\n');
@@ -107,14 +175,41 @@ export default function useChat(characterId) {
 
       if (!accumulatedText.trim()) {
         throw new Error('Nhân vật chưa gửi được phản hồi. Vui lòng thử lại.');
+=======
+
+        if (value) {
+          sseBuffer += decoder.decode(value, { stream: true });
+          const events = sseBuffer.split('\n\n');
+          sseBuffer = events.pop() || '';
+          handleSseEvents(events);
+        }
+      }
+
+      sseBuffer += decoder.decode();
+      if (sseBuffer.trim()) {
+        handleSseEvents([sseBuffer]);
+>>>>>>> main
       }
 
       setMessages((prev) => [
         ...prev,
+<<<<<<< HEAD
         { role: 'assistant', content: accumulatedText, sources: accumulatedSources }
       ]);
       setCurrentResponse('');
       setCurrentSources([]);
+=======
+        {
+          role: 'assistant',
+          content: accumulatedText,
+          sources: accumulatedSources,
+          guardrail: accumulatedGuardrail
+        }
+      ]);
+      setCurrentResponse('');
+      setCurrentSources([]);
+      setCurrentGuardrail(null);
+>>>>>>> main
       setIsStreaming(false);
     } catch (err) {
       if (err.name !== 'AbortError') {
@@ -142,10 +237,29 @@ export default function useChat(characterId) {
     setMessages([]);
     setCurrentResponse('');
     setCurrentSources([]);
+<<<<<<< HEAD
     setIsStreaming(false);
     setError(null);
     setLastFailedMessage(null);
+=======
+    setCurrentGuardrail(null);
+    setIsStreaming(false);
+    setError(null);
+    sessionIdRef.current = createSessionId();
+>>>>>>> main
   }, []);
+
+  useEffect(() => {
+    if (!characterId || previousCharacterIdRef.current === characterId) return;
+    previousCharacterIdRef.current = characterId;
+    setMessages([]);
+    setCurrentResponse('');
+    setCurrentSources([]);
+    setCurrentGuardrail(null);
+    setIsStreaming(false);
+    setError(null);
+    sessionIdRef.current = createSessionId();
+  }, [characterId]);
 
   useEffect(() => {
     return () => {
@@ -159,6 +273,10 @@ export default function useChat(characterId) {
     messages,
     currentResponse,
     currentSources,
+<<<<<<< HEAD
+=======
+    currentGuardrail,
+>>>>>>> main
     isStreaming,
     error,
     lastFailedMessage,
