@@ -1,5 +1,7 @@
 # SửViệtAI
 
+![SửViệtAI project preview](docs/assets/suvietai-project-preview.png)
+
 > Lịch sử Việt Nam không chỉ nằm trong những trang sách, mà có thể sống lại qua từng cuộc đối thoại.
 
 **SửViệtAI** là ứng dụng chat AI mô phỏng các nhân vật lịch sử Việt Nam, giúp học sinh, giáo viên và người yêu lịch sử tiếp cận kiến thức theo cách gần gũi hơn: đặt câu hỏi, trò chuyện và nhận câu trả lời có ngữ cảnh từ những gương mặt tiêu biểu của dân tộc.

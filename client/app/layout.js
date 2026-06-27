@@ -10,20 +10,26 @@ export default function RootLayout({ children }) {
   return (
     <html lang="vi">
       <body>
-        <nav style={styles.nav}>
-          <div style={styles.navInner}>
-            <div style={styles.navLogo}>
-              ⚔️ SửViệtAI — Hào Khí Đông A
-            </div>
-            <div style={styles.navBadge}>
+        {/* NAVBAR */}
+        <nav className="navbar">
+          <div className="nav-inner">
+            <a href="/" className="nav-logo">
+              <span className="nav-logo-icon">⚔️</span>
+              <span className="nav-logo-text">SửViệtAI</span>
+            </a>
+            <div className="nav-badge">
               Codex Hackathon 2026
             </div>
           </div>
         </nav>
-        <main style={styles.mainContainer}>
+
+        {/* MAIN CONTENT */}
+        <main className="main-content">
           {children}
         </main>
-        <footer style={styles.footer}>
+
+        {/* FOOTER */}
+        <footer className="footer">
           <p>⚔️ SửViệtAI — Codex Community Hackathon 2026 · Track 3: IMPACT to Vietnam</p>
           {/* <p className="footer-heart">Prepared with 💜 — Chúc team chiến thắng! 🇻🇳</p> */}
         </footer>
