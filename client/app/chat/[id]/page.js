@@ -35,17 +35,17 @@ const STATIC_CHARACTERS = {
     ],
     color: '#10b981'
   },
-  nguyen_thi_binh: {
-    name: 'Nguyễn Thị Bình',
-    emoji: '🕊️',
-    period: 'Thế kỷ XX-XXI · Ngoại giao Việt Nam',
-    shortBio: 'Nhà ngoại giao tiêu biểu của Việt Nam, Trưởng đoàn đàm phán Chính phủ Cách mạng lâm thời Cộng hòa miền Nam Việt Nam tại Hội nghị Paris, người ký Hiệp định Paris năm 1973.',
+  ho_xuan_huong: {
+    name: 'Hồ Xuân Hương',
+    emoji: '🌸',
+    period: 'Thế kỷ XVIII-XIX · Lê Trung Hưng - Nguyễn',
+    shortBio: 'Nữ sĩ tài hoa được mệnh danh là "Bà chúa thơ Nôm", nổi bật với thơ Nôm trào phúng, sắc sảo, bênh vực thân phận và khát vọng sống của người phụ nữ.',
     suggestedQuestions: [
-      'Điều gì khó nhất trong quá trình đàm phán Hiệp định Paris?',
-      'Bài học ngoại giao lớn nhất từ Hội nghị Paris là gì?',
-      'Vai trò của phụ nữ Việt Nam trên mặt trận ngoại giao được thể hiện ra sao?'
+      'Ý nghĩa ẩn dụ trong bài thơ Bánh trôi nước là gì?',
+      'Nỗi lòng riêng tư của bà gửi gắm trong thơ Tự tình?',
+      'Vì sao thơ Hồ Xuân Hương vừa trào phúng vừa nhân văn?'
     ],
-    color: '#06b6d4'
+    color: '#ec4899'
   }
 };
 
