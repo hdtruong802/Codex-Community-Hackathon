@@ -16,10 +16,35 @@ const CLIENT_ORIGINS = (process.env.CLIENT_ORIGINS || 'http://localhost:3000,htt
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
+const ALLOWED_ORIGINS = new Set([
+  ...CLIENT_ORIGINS,
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5173',
+  'http://[::1]:3000',
+  'http://[::1]:5173'
+]);
+
+const isAllowedDevOrigin = (origin) => {
+  try {
+    const url = new URL(origin);
+    const isLocalHost = ['localhost', '127.0.0.1', '[::1]'].includes(url.hostname);
+    const isDevPort = ['3000', '5173'].includes(url.port);
+    return url.protocol === 'http:' && isLocalHost && isDevPort;
+  } catch {
+    return false;
+  }
+};
 
 // CORS middleware supporting both Next.js (3000) and Vite (5173) local origins
 app.use(cors({
-  origin: CLIENT_ORIGINS,
+  origin(origin, callback) {
+    if (!origin || ALLOWED_ORIGINS.has(origin) || isAllowedDevOrigin(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`CORS blocked origin: ${origin}`));
+  },
   optionsSuccessStatus: 204
 }));
 
