@@ -1,96 +1,135 @@
 import React from 'react';
+import { API_BASE_URL } from '@/utils/api';
+
+const SOURCE_MARKER = '📚';
+
+const PORTRAITS = {
+  tran_hung_dao: '/characters/tran_hung_dao.png',
+  ly_thuong_kiet: '/characters/ly_thuong_kiet.png',
+  ho_xuan_huong: '/characters/ho_xuan_huong.png'
+};
+
+const buildDocumentUrl = (source) => {
+  if (!source?.sourceFile) return null;
+  const pageAnchor = source.pageStart ? `#page=${source.pageStart}` : '';
+  return `${API_BASE_URL}/api/sources/document?path=${encodeURIComponent(source.sourceFile)}${pageAnchor}`;
+};
+
+const parseContent = (text) => {
+  if (!text) return { content: '', fallbackSource: null };
+  if (!text.includes(SOURCE_MARKER)) return { content: text, fallbackSource: null };
+
+  const [content, ...sourceParts] = text.split(SOURCE_MARKER);
+  return {
+    content: content.trim(),
+    fallbackSource: `${SOURCE_MARKER} ${sourceParts.join(SOURCE_MARKER).trim()}`
+  };
+};
 
 export default function ChatMessage({ message, character }) {
   const isUser = message.role === 'user';
+  const { content, fallbackSource } = parseContent(message.content);
+  const sources = Array.isArray(message.sources) ? message.sources : [];
+  const guardrail = message.guardrail;
+  const color = character?.color || '#8b5cf6';
+  const portrait = character?.id ? PORTRAITS[character.id] : null;
 
-  // Parse message content to separate body from the historical source references
-  const parseContent = (text) => {
-    if (!text) return { content: '', source: null };
-    const marker = '📚';
-    if (text.includes(marker)) {
-      const parts = text.split(marker);
-      return {
-        content: parts[0].trim(),
-        source: marker + ' ' + parts[1].trim()
-      };
-    }
-    return { content: text, source: null };
-  };
-
-  const { content, source } = parseContent(message.content);
-
-  const containerStyle = {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: isUser ? 'flex-end' : 'flex-start',
-    marginBottom: '1rem',
-    width: '100%',
-    animation: 'fadeInUp 0.3s ease'
-  };
-
-  const wrapperStyle = {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '0.75rem',
-    maxWidth: '80%'
-  };
-
-  const avatarStyle = {
-    width: '32px',
-    height: '32px',
-    borderRadius: '8px',
-    background: isUser ? 'rgba(59, 130, 246, 0.1)' : `${character?.color || '#8b5cf6'}12`,
-    border: `1px solid ${isUser ? 'rgba(59, 130, 246, 0.2)' : `${character?.color || '#8b5cf6'}25`}`,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '1.1rem',
-    flexShrink: 0
-  };
-
-  const bubbleStyle = {
-    background: isUser ? 'rgba(59, 130, 246, 0.12)' : 'var(--bg-card)',
-    border: `1px solid ${isUser ? 'rgba(59, 130, 246, 0.2)' : 'var(--border)'}`,
-    borderRadius: '12px',
-    borderTopLeftRadius: isUser ? '12px' : '2px',
-    borderTopRightRadius: isUser ? '2px' : '12px',
-    padding: '0.8rem 1rem',
-    color: 'var(--text-primary)',
-    fontSize: '0.88rem',
-    lineHeight: '1.5',
-    wordBreak: 'break-word',
-    boxShadow: !isUser ? 'var(--shadow-glow)' : 'none'
-  };
-
-  const contentStyle = {
-    whiteSpace: 'pre-wrap'
-  };
-
-  const sourceBoxStyle = {
-    marginTop: '0.75rem',
-    paddingTop: '0.6rem',
-    borderTop: '1px dashed var(--border)',
-    fontSize: '0.75rem',
-    color: character?.color || 'var(--accent-purple)',
-    fontStyle: 'italic',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.35rem'
-  };
+  const guardrailLabel = guardrail?.decision === 'block'
+    ? 'Đã chặn theo guardrail'
+    : 'Đã chuyển hướng về lịch sử';
 
   return (
-    <div style={containerStyle}>
-      <div style={wrapperStyle}>
-        {!isUser && <div style={avatarStyle}>{character?.emoji || '👤'}</div>}
-        <div style={bubbleStyle}>
-          <div style={contentStyle}>{content}</div>
-          {source && (
-            <div style={sourceBoxStyle}>
-              <span>{source}</span>
+    <div className={`message ${isUser ? 'message-user' : 'message-ai'}`}>
+      <div className="message-wrapper">
+        {/* AI Avatar */}
+        {!isUser && (
+          <div
+            className="message-avatar message-avatar-ai"
+            style={{ background: `${color}10`, borderColor: `${color}20` }}
+          >
+            {portrait ? (
+              <img src={portrait} alt={character?.name || ''} />
+            ) : (
+              character?.emoji || '👤'
+            )}
+          </div>
+        )}
+
+        {/* Message Bubble */}
+        <div className={`message-bubble ${isUser ? 'message-bubble-user' : 'message-bubble-ai'}`}>
+          {/* Guardrail badge */}
+          {!isUser && guardrail && guardrail.decision !== 'allow' && (
+            <div
+              className="guardrail-badge"
+              style={{
+                border: `1px solid ${guardrail.decision === 'block' ? 'rgba(239, 68, 68, 0.25)' : `${color}35`}`,
+                background: guardrail.decision === 'block' ? 'rgba(239, 68, 68, 0.06)' : `${color}10`,
+                color: guardrail.decision === 'block' ? 'var(--accent-red)' : color
+              }}
+            >
+              {guardrailLabel}
+            </div>
+          )}
+
+          {/* Content */}
+          <div className="message-content">{content}</div>
+
+          {/* Structured sources from RAG */}
+          {!isUser && sources.length > 0 && (
+            <div className="source-box" style={{ color }}>
+              <div className="source-header">
+                📖 Sử liệu tham khảo
+              </div>
+              {sources.map((source, index) => {
+                const documentUrl = buildDocumentUrl(source);
+                const label = source.label || source.sourceFile || `Nguồn ${index + 1}`;
+
+                return (
+                  <details key={`${label}-${index}`} className="source-item">
+                    <summary>
+                      {documentUrl ? (
+                        <a
+                          href={documentUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="source-item-link"
+                          style={{ color }}
+                          onClick={(event) => event.stopPropagation()}
+                        >
+                          {label}
+                        </a>
+                      ) : (
+                        <span className="source-item-link" style={{ color }}>{label}</span>
+                      )}
+                      {source.pageStart && (
+                        <span style={{ color: 'var(--text-muted)', marginLeft: '0.35rem' }}>
+                          tr. {source.pageStart}
+                        </span>
+                      )}
+                    </summary>
+                    {source.excerpt && (
+                      <div className="source-excerpt">{source.excerpt}</div>
+                    )}
+                  </details>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Fallback text-embedded source */}
+          {!isUser && sources.length === 0 && fallbackSource && (
+            <div className="source-box" style={{ color }}>
+              <span>{fallbackSource}</span>
             </div>
           )}
         </div>
-        {isUser && <div style={avatarStyle}>🧑</div>}
+
+        {/* User Avatar */}
+        {isUser && (
+          <div className="message-avatar message-avatar-user">
+            🧑
+          </div>
+        )}
       </div>
     </div>
   );

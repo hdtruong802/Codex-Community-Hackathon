@@ -10,8 +10,15 @@ import SuggestedQuestions from '@/components/SuggestedQuestions';
 import Disclaimer from '@/components/Disclaimer';
 import { getCharacterDetails } from '@/utils/api';
 
+const PORTRAITS = {
+  tran_hung_dao: '/characters/tran_hung_dao.png',
+  ly_thuong_kiet: '/characters/ly_thuong_kiet.png',
+  ho_xuan_huong: '/characters/ho_xuan_huong.png'
+};
+
 const STATIC_CHARACTERS = {
   tran_hung_dao: {
+    id: 'tran_hung_dao',
     name: 'Trần Hưng Đạo',
     emoji: '⚔️',
     period: 'Thế kỷ XIII · Nhà Trần',
@@ -24,6 +31,7 @@ const STATIC_CHARACTERS = {
     color: '#ef4444'
   },
   ly_thuong_kiet: {
+    id: 'ly_thuong_kiet',
     name: 'Lý Thường Kiệt',
     emoji: '🏛️',
     period: 'Thế kỷ XI · Nhà Lý',
@@ -36,6 +44,7 @@ const STATIC_CHARACTERS = {
     color: '#10b981'
   },
   ho_xuan_huong: {
+    id: 'ho_xuan_huong',
     name: 'Hồ Xuân Hương',
     emoji: '🌸',
     period: 'Thế kỷ XVIII-XIX · Lê Trung Hưng - Nguyễn',
@@ -53,7 +62,7 @@ export default function ChatPage({ params }) {
   const router = useRouter();
   const [unwrappedParams, setUnwrappedParams] = useState(null);
   const [character, setCharacter] = useState(null);
-  
+
   const messagesEndRef = useRef(null);
 
   // Safely resolve the dynamic params promise (Next.js 14 & 15 cross-compatible)
@@ -72,9 +81,8 @@ export default function ChatPage({ params }) {
       try {
         const details = await getCharacterDetails(characterId);
         if (details) {
-          setCharacter(details);
+          setCharacter({ ...details, id: characterId });
         } else {
-          // Fallback if API returned null
           setCharacter(STATIC_CHARACTERS[characterId] || null);
         }
       } catch (err) {
@@ -89,6 +97,8 @@ export default function ChatPage({ params }) {
   const {
     messages,
     currentResponse,
+    currentSources,
+    currentGuardrail,
     isStreaming,
     error,
     sendMessage,
@@ -100,60 +110,111 @@ export default function ChatPage({ params }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, currentResponse, isStreaming]);
 
+  // Loading state
   if (!character) {
     return (
-      <div className="container" style={styles.loadingContainer}>
-        <div className="pulse" style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>
-          Đang kết nối thư tịch cổ...
+      <div className="container loading-screen">
+        <div className="loading-text">
+          ⏳ Đang kết nối thư tịch cổ...
         </div>
       </div>
     );
   }
 
+  const portrait = PORTRAITS[characterId];
+  const color = character.color || '#8b5cf6';
+
   return (
-    <div className="container" style={styles.chatLayout}>
-      {/* SIDEBAR - CHARACTER PROFILE INFO */}
-      <aside style={styles.sidebar}>
-        <button onClick={() => router.push('/')} style={styles.backBtn}>
+    <div className="container chat-layout">
+      {/* ═══ SIDEBAR ═══ */}
+      <aside className="chat-sidebar">
+        <button onClick={() => router.push('/')} className="chat-back-btn">
           ← Về trang chủ
         </button>
-        <div style={{ ...styles.profileBox, borderColor: `${character.color}25` }}>
-          <div style={styles.profileEmoji}>{character.emoji}</div>
-          <h2 style={styles.profileName}>{character.name}</h2>
-          <span style={{ ...styles.profilePeriod, color: character.color }}>{character.period}</span>
-          <p style={styles.profileBio}>{character.shortBio}</p>
-          <div style={styles.divider} />
-          <button onClick={clearHistory} style={styles.resetBtn}>
+
+        <div className="profile-card">
+          {/* Portrait */}
+          <div className="profile-portrait">
+            {portrait ? (
+              <img src={portrait} alt={character.name} />
+            ) : (
+              <div style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '4rem',
+                background: `linear-gradient(135deg, ${color}15, ${color}08)`
+              }}>
+                {character.emoji}
+              </div>
+            )}
+            <div className="profile-portrait-overlay" />
+          </div>
+
+          {/* Info */}
+          <div className="profile-info">
+            <span className="profile-emoji">{character.emoji}</span>
+            <h2 className="profile-name">{character.name}</h2>
+            <div className="profile-period" style={{ color }}>{character.period}</div>
+            <p className="profile-bio">{character.shortBio}</p>
+            <div className="profile-divider" />
+          </div>
+
+          {/* Clear button */}
+          <button onClick={clearHistory} className="chat-clear-btn">
             🗑️ Xóa hội thoại
           </button>
         </div>
+
         <Disclaimer />
       </aside>
 
-      {/* CHAT AREA */}
-      <section style={styles.chatArea}>
-        {/* HEADER BAR FOR MOBILE */}
-        <div style={styles.chatHeaderMobile}>
-          <button onClick={() => router.push('/')} style={styles.backBtnMobile}>
+      {/* ═══ CHAT AREA ═══ */}
+      <section
+        className="chat-area"
+        style={{
+          '--chat-color': color
+        }}
+      >
+        {/* Ambient glow */}
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '200px',
+            background: `radial-gradient(ellipse at 50% 0%, ${color}08, transparent 70%)`,
+            pointerEvents: 'none',
+            zIndex: 0
+          }}
+        />
+
+        {/* Mobile header */}
+        <div className="chat-header-mobile">
+          <button onClick={() => router.push('/')} className="chat-header-mobile-back">
             ←
           </button>
-          <div style={styles.headerTitleMobile}>
-            <span style={{ marginRight: '0.4rem' }}>{character.emoji}</span>
+          <div className="chat-header-mobile-title">
+            <span>{character.emoji}</span>
             <strong>{character.name}</strong>
           </div>
-          <button onClick={clearHistory} style={styles.resetBtnMobile} title="Xóa hội thoại">
+          <button onClick={clearHistory} className="chat-header-mobile-clear" title="Xóa hội thoại">
             🗑️
           </button>
         </div>
 
-        {/* MESSAGES LIST CONTAINER */}
-        <div style={styles.messageBox}>
+        {/* Messages */}
+        <div className="messages-container">
           {messages.length === 0 && !isStreaming ? (
-            <div style={styles.emptyState}>
-              <div style={styles.emptyIcon}>📜</div>
-              <h3 style={{ marginBottom: '0.5rem' }}>Đàm đạo cùng {character.name}</h3>
-              <p style={{ color: 'var(--text-secondary)', maxWidth: '400px', fontSize: '0.82rem' }}>
-                Hãy bắt đầu bằng cách gõ câu hỏi hoặc chọn một trong các gợi ý bên dưới để tìm hiểu về cuộc đời và di sản của nhân vật.
+            <div className="empty-state">
+              <div className="empty-state-icon">📜</div>
+              <h3 className="empty-state-title">Đàm đạo cùng {character.name}</h3>
+              <p className="empty-state-desc">
+                Hãy bắt đầu bằng cách gõ câu hỏi hoặc chọn một trong các gợi ý bên dưới
+                để tìm hiểu về cuộc đời và di sản của nhân vật.
               </p>
             </div>
           ) : (
@@ -162,21 +223,27 @@ export default function ChatPage({ params }) {
             ))
           )}
 
-          {/* Render Streaming Chunk in progress */}
+          {/* Streaming response in progress */}
           {isStreaming && currentResponse && (
             <ChatMessage
-              message={{ role: 'assistant', content: currentResponse }}
+              message={{
+                role: 'assistant',
+                content: currentResponse,
+                sources: currentSources,
+                guardrail: currentGuardrail
+              }}
               character={character}
             />
           )}
 
-          {/* Render typing indicator if request sent but no data received yet */}
+          {/* Typing indicator */}
           {isStreaming && !currentResponse && (
-            <TypingIndicator emoji={character.emoji} />
+            <TypingIndicator emoji={character.emoji} characterId={characterId} />
           )}
 
+          {/* Error */}
           {error && (
-            <div style={styles.errorBox}>
+            <div className="error-box">
               <strong>Lỗi kết nối:</strong> {error}. Hãy chắc chắn rằng backend server đang hoạt động tại cổng 3001 và API Key hợp lệ.
             </div>
           )}
@@ -184,217 +251,23 @@ export default function ChatPage({ params }) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* CHAT INTERACTION (SUGGESTED QUESTIONS + INPUT) */}
-        <div style={styles.inputArea}>
+        {/* Input area */}
+        <div className="input-area">
           {messages.length === 0 && !isStreaming && (
             <SuggestedQuestions
               questions={character.suggestedQuestions}
               onSelect={sendMessage}
-              color={character.color}
+              color={color}
             />
           )}
           <ChatInput
             onSend={sendMessage}
             placeholder={`Trò chuyện với ${character.name}...`}
             disabled={isStreaming}
+            characterColor={color}
           />
         </div>
       </section>
     </div>
   );
-}
-
-const styles = {
-  loadingContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '60vh'
-  },
-  chatLayout: {
-    display: 'grid',
-    gridTemplateColumns: '320px 1fr',
-    gap: '1.5rem',
-    height: 'calc(100vh - 150px)',
-    paddingBottom: '1.5rem'
-  },
-  sidebar: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-    height: '100%',
-    overflowY: 'auto'
-  },
-  backBtn: {
-    background: 'transparent',
-    border: '1px solid var(--border)',
-    color: 'var(--text-secondary)',
-    padding: '0.6rem 1rem',
-    borderRadius: '10px',
-    cursor: 'pointer',
-    fontSize: '0.85rem',
-    fontWeight: '600',
-    textAlign: 'left',
-    transition: 'all 0.2s',
-    display: 'flex',
-    alignItems: 'center',
-    width: 'fit-content'
-  },
-  profileBox: {
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: '14px',
-    padding: '1.5rem',
-    textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center'
-  },
-  profileEmoji: {
-    fontSize: '3.5rem',
-    marginBottom: '0.75rem'
-  },
-  profileName: {
-    fontSize: '1.3rem',
-    fontWeight: '800',
-    color: 'var(--text-primary)',
-    marginBottom: '0.25rem'
-  },
-  profilePeriod: {
-    fontSize: '0.75rem',
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    marginBottom: '1rem'
-  },
-  profileBio: {
-    fontSize: '0.82rem',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.5',
-    textAlign: 'justify'
-  },
-  divider: {
-    width: '100%',
-    height: '1px',
-    background: 'var(--border)',
-    margin: '1.25rem 0'
-  },
-  resetBtn: {
-    width: '100%',
-    background: 'rgba(239, 68, 68, 0.08)',
-    border: '1px solid rgba(239, 68, 68, 0.2)',
-    color: 'var(--accent-red)',
-    padding: '0.6rem',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    fontSize: '0.82rem',
-    fontWeight: '600',
-    transition: 'all 0.2s'
-  },
-  chatArea: {
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: '14px',
-    display: 'flex',
-    flexDirection: 'column',
-    height: '100%',
-    overflow: 'hidden'
-  },
-  chatHeaderMobile: {
-    display: 'none',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: '0.75rem 1rem',
-    borderBottom: '1px solid var(--border)',
-    background: 'rgba(14, 14, 22, 0.5)'
-  },
-  backBtnMobile: {
-    background: 'transparent',
-    border: 'none',
-    color: 'var(--text-primary)',
-    fontSize: '1.2rem',
-    cursor: 'pointer'
-  },
-  headerTitleMobile: {
-    fontSize: '0.9rem',
-    display: 'flex',
-    alignItems: 'center'
-  },
-  resetBtnMobile: {
-    background: 'transparent',
-    border: 'none',
-    color: 'var(--accent-red)',
-    fontSize: '1rem',
-    cursor: 'pointer'
-  },
-  messageBox: {
-    flex: 1,
-    padding: '1.5rem',
-    overflowY: 'auto',
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  emptyState: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100%',
-    textAlign: 'center',
-    color: 'var(--text-muted)',
-    padding: '2rem'
-  },
-  emptyIcon: {
-    fontSize: '3rem',
-    marginBottom: '1rem'
-  },
-  errorBox: {
-    padding: '0.8rem 1rem',
-    background: 'rgba(239, 68, 68, 0.08)',
-    border: '1px solid rgba(239, 68, 68, 0.2)',
-    color: 'var(--accent-red)',
-    borderRadius: '8px',
-    fontSize: '0.8rem',
-    marginTop: '0.5rem',
-    lineHeight: '1.4'
-  },
-  inputArea: {
-    padding: '1rem 1.5rem 1.5rem',
-    borderTop: '1px solid var(--border)',
-    background: 'rgba(10, 10, 15, 0.2)'
-  },
-
-  // Media queries responsive styles injected programmatically
-  '@media (max-width: 768px)': {
-    chatLayout: {
-      gridTemplateColumns: '1fr',
-      height: 'calc(100vh - 100px)'
-    },
-    sidebar: {
-      display: 'none'
-    },
-    chatHeaderMobile: {
-      display: 'flex'
-    }
-  }
-};
-
-// Simple media query adapter inject
-if (typeof window !== 'undefined') {
-  const styleEl = document.createElement('style');
-  styleEl.innerHTML = `
-    @media (max-width: 768px) {
-      .client_chatLayout__1122 {
-        grid-template-columns: 1fr !important;
-        height: calc(100vh - 120px) !important;
-      }
-      aside {
-        display: none !important;
-      }
-      .mobile-header-active {
-        display: flex !important;
-      }
-    }
-  `;
-  document.head.appendChild(styleEl);
 }

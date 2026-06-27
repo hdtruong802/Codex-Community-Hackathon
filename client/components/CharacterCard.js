@@ -1,96 +1,90 @@
-import React, { useState } from 'react';
+import React from 'react';
+
+// Character portrait mappings
+const PORTRAITS = {
+  tran_hung_dao: '/characters/tran_hung_dao.png',
+  ly_thuong_kiet: '/characters/ly_thuong_kiet.png',
+  ho_xuan_huong: '/characters/ho_xuan_huong.png'
+};
 
 export default function CharacterCard({ character, onClick }) {
-  const [hovered, setHovered] = useState(false);
-
-  const cardStyle = {
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: '14px',
-    padding: '1.5rem',
-    cursor: 'pointer',
-    position: 'relative',
-    overflow: 'hidden',
-    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-    transform: hovered ? 'translateY(-3px)' : 'translateY(0)',
-    borderColor: hovered ? character.color : 'var(--border)',
-    boxShadow: hovered ? `0 0 25px ${character.color}18` : 'none'
-  };
-
-  const topBarStyle = {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '4px',
-    background: character.color
-  };
-
-  const emojiStyle = {
-    fontSize: '2.5rem',
-    marginBottom: '1rem',
-    display: 'inline-block',
-    transition: 'transform 0.3s ease',
-    transform: hovered ? 'scale(1.15) rotate(5deg)' : 'scale(1)'
-  };
-
-  const nameStyle = {
-    fontSize: '1.25rem',
-    fontWeight: '800',
-    marginBottom: '0.25rem',
-    color: 'var(--text-primary)'
-  };
-
-  const periodStyle = {
-    fontSize: '0.75rem',
-    fontWeight: '600',
-    color: character.color,
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-    marginBottom: '0.75rem'
-  };
-
-  const bioStyle = {
-    fontSize: '0.85rem',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.5',
-    marginBottom: '1.25rem'
-  };
-
-  const tagListStyle = {
-    display: 'flex',
-    gap: '0.4rem',
-    flexWrap: 'wrap'
-  };
-
-  const tagStyle = {
-    fontSize: '0.7rem',
-    fontWeight: '600',
-    padding: '0.2rem 0.6rem',
-    borderRadius: '100px',
-    background: `${character.color}12`,
-    border: `1px solid ${character.color}25`,
-    color: character.color
-  };
+  const portrait = PORTRAITS[character.id];
+  const color = character.color || '#8b5cf6';
 
   return (
     <div
-      style={cardStyle}
+      className="character-card"
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      style={{ '--card-color': color }}
     >
-      <div style={topBarStyle} />
-      <span style={emojiStyle}>{character.emoji}</span>
-      <h3 style={nameStyle}>{character.name}</h3>
-      <div style={periodStyle}>{character.period}</div>
-      <p style={bioStyle}>{character.shortBio}</p>
-      <div style={tagListStyle}>
-        {character.topics.map((topic, i) => (
-          <span key={i} style={tagStyle}>
-            {topic}
-          </span>
-        ))}
+      {/* Ambient glow behind card */}
+      <div
+        className="card-glow"
+        style={{ background: `${color}15` }}
+      />
+
+      {/* Animated border glow */}
+      <div className="card-border-glow" />
+
+      <div className="card-inner">
+        {/* Portrait */}
+        <div className="card-portrait">
+          {portrait ? (
+            <img
+              src={portrait}
+              alt={`Chân dung ${character.name}`}
+              loading="eager"
+            />
+          ) : (
+            <div style={{
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '4rem',
+              background: `linear-gradient(135deg, ${color}15, ${color}08)`
+            }}>
+              {character.emoji}
+            </div>
+          )}
+          <div className="card-portrait-overlay" />
+          <span className="card-portrait-emoji">{character.emoji}</span>
+        </div>
+
+        {/* Card body */}
+        <div className="card-body">
+          <h3 className="card-name">{character.name}</h3>
+          <div className="card-period" style={{ color }}>{character.period}</div>
+          <p className="card-bio">{character.shortBio}</p>
+
+          {/* Topic tags */}
+          <div className="card-tags">
+            {character.topics.map((topic, i) => (
+              <span
+                key={i}
+                className="card-tag"
+                style={{
+                  background: `${color}0d`,
+                  border: `1px solid ${color}20`,
+                  color: color
+                }}
+              >
+                {topic}
+              </span>
+            ))}
+          </div>
+
+          {/* CTA Button */}
+          <button
+            className="card-cta"
+            style={{ background: `${color}18`, color }}
+            onClick={(e) => { e.stopPropagation(); onClick(); }}
+          >
+            Trò chuyện
+            <span className="card-cta-arrow">→</span>
+          </button>
+        </div>
       </div>
     </div>
   );
