@@ -2,7 +2,7 @@
 
 ## Hướng thiết kế
 
-Sử Việt AI dùng dark theme hiện đại, có cảm giác trang trọng nhưng vẫn gần gũi. UI phải phục vụ trải nghiệm hỏi đáp lịch sử, không biến thành landing page marketing dài.
+Sử Việt AI dùng light theme nền trắng hiện đại, có cảm giác trang trọng nhưng vẫn gần gũi. UI phải phục vụ trải nghiệm hỏi đáp lịch sử, không biến thành landing page marketing dài.
 
 Màn hình đầu tiên phải giúp người dùng làm được việc chính: chọn nhân vật và bắt đầu chat.
 
@@ -12,13 +12,13 @@ Tokens nằm trong `client/app/globals.css`. App dùng shadcn/ui + Tailwind CSS 
 
 | Token | Giá trị | Mục đích |
 | --- | --- | --- |
-| `--bg-primary` | `#0a0a0f` | Nền app |
-| `--bg-secondary` | `#0e0e16` | Nền phụ |
-| `--bg-card` | `#1a1a2e` | Card, chat panel |
-| `--bg-card-alt` | `#16162a` | Input, panel phụ |
-| `--border` | `#2a2a40` | Border mặc định |
-| `--text-primary` | `#e8e8f0` | Text chính |
-| `--text-secondary` | `#9ca3af` | Text phụ |
+| `--bg-primary` | `#ffffff` | Nền app |
+| `--bg-secondary` | `#f8fafc` | Nền phụ |
+| `--bg-card` | `#ffffff` | Card, chat panel |
+| `--bg-card-alt` | `#f1f5f9` | Input, panel phụ |
+| `--border` | `#e2e8f0` | Border mặc định |
+| `--text-primary` | `#0f172a` | Text chính |
+| `--text-secondary` | `#475569` | Text phụ |
 | `--text-muted` | `#6b7280` | Label/empty state |
 | `--accent-purple` | `#8b5cf6` | Accent sản phẩm |
 
@@ -131,7 +131,7 @@ Quy tắc:
 
 - Tất cả button icon cần có `title` hoặc `aria-label`.
 - Focus state phải thấy được trên keyboard.
-- Màu text trên nền tối phải đảm bảo contrast tốt.
+- Màu text trên nền trắng và panel nhạt phải đảm bảo contrast tốt.
 - Emoji không nên là thông tin duy nhất để phân biệt nhân vật; luôn có tên text.
 - Input disabled phải có visual state rõ.
 

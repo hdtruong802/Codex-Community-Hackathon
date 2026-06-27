@@ -100,7 +100,7 @@ Frontend dùng shadcn/ui + Tailwind CSS 4 làm nền UI. Khi chỉnh tiếp:
 - Trạng thái disabled phải có visual state rõ.
 - Focus state phải thấy được khi dùng keyboard.
 - Emoji không được là thông tin duy nhất; luôn có text label.
-- Text phải đủ contrast trên dark theme.
+- Text phải đủ contrast trên light theme nền trắng.
 
 ## Commit
 

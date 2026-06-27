@@ -51,7 +51,7 @@ Thứ tự ưu tiên:
 ## Khi sửa UI
 
 - Bám `UI_SPEC.md`.
-- Dùng dark theme và CSS variables hiện có.
+- Dùng light theme nền trắng và CSS variables hiện có.
 - Ưu tiên shadcn/ui components trong `client/components/ui/` và Tailwind utility class.
 - Nếu thiếu component UI phổ biến, thêm bằng `npx shadcn@latest add <component>` trong `client/`.
 - Card chỉ dùng cho item, panel, modal hoặc tool surface thật sự.

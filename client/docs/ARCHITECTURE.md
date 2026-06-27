@@ -23,7 +23,7 @@ Luồng trải nghiệm chính:
 | Framework | Next.js 16 | Dùng App Router trong `client/app/`. |
 | UI runtime | React 19 | Component hiện tại chủ yếu là function components. |
 | UI library | shadcn/ui | Cấu hình qua `components.json`, component registry nằm trong `client/components/ui/`. |
-| Styling | Tailwind CSS 4 + `globals.css` | Tailwind/PostCSS ở `tailwind.config.js` và `postcss.config.mjs`; token dark theme nằm trong `globals.css`. |
+| Styling | Tailwind CSS 4 + `globals.css` | Tailwind/PostCSS ở `tailwind.config.js` và `postcss.config.mjs`; token light theme nền trắng nằm trong `globals.css`. |
 | Icons | `lucide-react` | Dùng icon Lucide trong button/action thay vì tự vẽ SVG nếu có icon phù hợp. |
 | Lint | ESLint 9 + `eslint-config-next` | Chạy bằng `npm run lint` trong `client/`. |
 | API | Fetch browser API | `GET /api/characters`, `POST /api/chat`. |

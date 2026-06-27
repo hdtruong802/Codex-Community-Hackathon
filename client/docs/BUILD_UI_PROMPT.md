@@ -83,7 +83,7 @@ Acceptance Criteria:
 - Không có màn hình loading treo vô hạn nếu character ID không tồn tại.
 - Có loading, empty, error, disabled states cho các flow chính.
 - Layout không tràn ngang ở mobile 320px.
-- Giao diện bám dark theme và design tokens hiện có trong `client/app/globals.css`.
+- Giao diện bám light theme nền trắng và design tokens hiện có trong `client/app/globals.css`.
 
 Component rules:
 
@@ -126,7 +126,7 @@ Design rules:
 - Dùng CSS variables trong `client/app/globals.css`: `--bg-primary`, `--bg-secondary`, `--bg-card`, `--bg-card-alt`, `--border`, `--text-primary`, `--text-secondary`, `--text-muted`, `--accent-purple`.
 - Đồng bộ với shadcn tokens trong `globals.css`: `--background`, `--foreground`, `--card`, `--primary`, `--muted`, `--border`, `--ring`.
 - Dùng màu nhân vật từ data `character.color`, không hard-code trong component nếu dữ liệu đã có.
-- Dark theme trang trọng, gần gũi, phục vụ học lịch sử qua đối thoại.
+- Light theme nền trắng trang trọng, gần gũi, phục vụ học lịch sử qua đối thoại.
 - Không thêm landing page marketing dài trước gallery.
 - Không dùng decoration làm lu mờ nhân vật và chat.
 - Text tiếng Việt có dấu.
@@ -216,7 +216,7 @@ Luôn yêu cầu:
 - Dùng design tokens trong `client/app/globals.css`.
 - Dùng shadcn/ui components thay vì tự dựng primitive.
 - Dùng `character.color` từ data.
-- Giữ dark theme, typography, spacing và copywriting thống nhất.
+- Giữ light theme nền trắng, typography, spacing và copywriting thống nhất.
 
 ### 6. Responsive làm sau nên bị vỡ
 
