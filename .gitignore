@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 .pnpm-store/
+.venv/
 
 # Next.js build outputs
 client/.next/
@@ -29,3 +30,6 @@ Thumbs.db
 
 #Docs
 su-viet-ai-battle-plan.html
+
+# RAG generated artifacts
+server/rag/processed/

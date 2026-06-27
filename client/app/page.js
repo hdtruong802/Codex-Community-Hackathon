@@ -26,13 +26,13 @@ const STATIC_CHARACTERS = [
     color: '#10b981'
   },
   {
-    id: 'nguyen_thi_binh',
-    name: 'Nguyễn Thị Bình',
-    emoji: '🕊️',
-    period: 'Thế kỷ XX-XXI · Ngoại giao Việt Nam',
-    shortBio: 'Nhà ngoại giao tiêu biểu của Việt Nam, Trưởng đoàn đàm phán Chính phủ Cách mạng lâm thời Cộng hòa miền Nam Việt Nam tại Hội nghị Paris, người ký Hiệp định Paris năm 1973.',
-    topics: ['Hiệp định Paris', 'Ngoại giao', 'Hòa bình'],
-    color: '#06b6d4'
+    id: 'ho_xuan_huong',
+    name: 'Hồ Xuân Hương',
+    emoji: '🌸',
+    period: 'Thế kỷ XVIII-XIX · Lê Trung Hưng - Nguyễn',
+    shortBio: 'Nữ sĩ tài hoa được mệnh danh là "Bà chúa thơ Nôm", nổi bật với thơ Nôm trào phúng, sắc sảo, bênh vực thân phận và khát vọng sống của người phụ nữ.',
+    topics: ['Thơ Nôm', 'Trào phúng', 'Quyền phụ nữ'],
+    color: '#ec4899'
   }
 ];
 
@@ -73,7 +73,7 @@ export default function Home() {
           <span style={styles.purpleText}>Nhân vật Lịch sử</span> Việt Nam
         </h1>
         <p style={styles.heroSub}>
-          Tìm hiểu nguồn cội dân tộc bằng cách đàm đạo với những nhân vật tiêu biểu trên các mặt trận quân sự, chủ quyền và ngoại giao qua mô phỏng trí tuệ nhân tạo.
+          Tìm hiểu nguồn cội dân tộc bằng cách đàm đạo với những nhân vật tiêu biểu trên các mặt trận quân sự, chủ quyền và văn học qua mô phỏng trí tuệ nhân tạo.
         </p>
       </section>
 
@@ -82,7 +82,7 @@ export default function Home() {
       {/* CHARACTER GRID */}
       <div style={styles.gridHeader}>
         <h2 style={styles.gridTitle}>📜 Chọn nhân vật lịch sử</h2>
-        <p style={styles.gridDesc}>Nhấp vào nhân vật để bắt đầu hành trình đàm đạo về giữ nước, chủ quyền và hòa bình.</p>
+        <p style={styles.gridDesc}>Nhấp vào nhân vật để bắt đầu hành trình đàm đạo về giữ nước, chủ quyền và văn chương.</p>
       </div>
 
       <div style={styles.grid}>

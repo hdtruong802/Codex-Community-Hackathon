@@ -5,7 +5,12 @@
   "main": "index.js",
   "scripts": {
     "dev": "node --watch index.js",
-    "start": "node index.js"
+    "start": "node index.js",
+    "check": "node scripts/check-backend.js",
+    "rag:ingest": "node scripts/rag/ingest.js",
+    "rag:ingest:dry": "node scripts/rag/ingest.js --dry-run",
+    "rag:query": "node scripts/rag/query.js",
+    "rag:health": "node scripts/rag/health.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
