@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import charactersRouter from './routes/characters.js';
 import chatRouter from './routes/chat.js';
+import sourcesRouter from './routes/sources.js';
 import { characters } from './data/characters.js';
 import { getQdrantHealth } from './rag/qdrant.js';
 
@@ -18,14 +19,16 @@ const CLIENT_ORIGINS = (process.env.CLIENT_ORIGINS || 'http://localhost:3000,htt
 
 // CORS middleware supporting both Next.js (3000) and Vite (5173) local origins
 app.use(cors({
-  origin: CLIENT_ORIGINS
+  origin: CLIENT_ORIGINS,
+  optionsSuccessStatus: 204
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '256kb' }));
 
 // Routing
 app.use('/api/characters', charactersRouter);
 app.use('/api/chat', chatRouter);
+app.use('/api/sources', sourcesRouter);
 
 // Health Check Endpoint
 app.get('/api/health', async (req, res) => {
