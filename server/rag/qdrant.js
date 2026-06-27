@@ -1,22 +1,40 @@
 import { ragConfig } from './config.js';
 
+const QDRANT_TIMEOUT_MS = Number(process.env.QDRANT_TIMEOUT_MS || 3000);
+
 const qdrantHeaders = () => ({
   'Content-Type': 'application/json',
   ...(ragConfig.qdrantApiKey ? { 'api-key': ragConfig.qdrantApiKey } : {})
 });
 
 const qdrantFetch = async (path, options = {}) => {
-  const response = await fetch(`${ragConfig.qdrantUrl}${path}`, {
-    ...options,
-    headers: {
-      ...qdrantHeaders(),
-      ...(options.headers || {})
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), QDRANT_TIMEOUT_MS);
+  let response;
+
+  try {
+    response = await fetch(`${ragConfig.qdrantUrl}${path}`, {
+      ...options,
+      signal: options.signal || controller.signal,
+      headers: {
+        ...qdrantHeaders(),
+        ...(options.headers || {})
+      }
+    });
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error(`Qdrant request timed out after ${QDRANT_TIMEOUT_MS}ms`);
     }
-  });
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
 
   if (!response.ok) {
     const body = await response.text();
-    throw new Error(`Qdrant ${response.status}: ${body}`);
+    const error = new Error(`Qdrant ${response.status}: ${body}`);
+    error.status = response.status;
+    throw error;
   }
 
   if (response.status === 204) return null;
@@ -26,7 +44,23 @@ const qdrantFetch = async (path, options = {}) => {
 export const getQdrantHealth = async () => {
   try {
     await qdrantFetch('/collections');
-    return { provider: 'qdrant', connected: true, collection: ragConfig.collection };
+    try {
+      await qdrantFetch(`/collections/${encodeURIComponent(ragConfig.collection)}`);
+      return {
+        provider: 'qdrant',
+        connected: true,
+        collection: ragConfig.collection,
+        collectionReady: true
+      };
+    } catch (error) {
+      return {
+        provider: 'qdrant',
+        connected: true,
+        collection: ragConfig.collection,
+        collectionReady: false,
+        error: error.message
+      };
+    }
   } catch (error) {
     return {
       provider: 'qdrant',
@@ -43,6 +77,10 @@ export const ensureCollection = async () => {
   try {
     await qdrantFetch(collectionPath);
   } catch (error) {
+    if (error.status && error.status !== 404) {
+      throw error;
+    }
+
     await qdrantFetch(collectionPath, {
       method: 'PUT',
       body: JSON.stringify({

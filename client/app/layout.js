@@ -25,7 +25,7 @@ export default function RootLayout({ children }) {
         </main>
         <footer style={styles.footer}>
           <p>⚔️ SửViệtAI — Codex Community Hackathon 2026 · Track 3: IMPACT to Vietnam</p>
-          <p style={styles.footerNote}>Prepared with 💜 — Chúc team chiến thắng!</p>
+          {/* <p className="footer-heart">Prepared with 💜 — Chúc team chiến thắng! 🇻🇳</p> */}
         </footer>
       </body>
     </html>
