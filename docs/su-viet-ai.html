@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SửViệtAI — Trò chuyện với danh nhân lịch sử Việt Nam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-card: #1a1a2e;
+            --border: #2a2a40;
+            --text-primary: #e8e8f0;
+            --text-secondary: #9ca3af;
+            --text-muted: #6b7280;
+            --accent-purple: #8b5cf6;
+            --accent-indigo: #6366f1;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-gold: #d4a017;
+            --accent-pink: #ec4899;
+            --gradient-main: linear-gradient(135deg, #8b5cf6, #6366f1);
+            --gradient-warm: linear-gradient(135deg, #ec4899, #8b5cf6);
+            --shadow-glow: 0 0 30px rgba(139, 92, 246, 0.12);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+        }
+
+        body::before {
+            content: '';
+            position: fixed; inset: 0;
+            background:
+                radial-gradient(ellipse at 25% 15%, rgba(139,92,246,0.07) 0%, transparent 50%),
+                radial-gradient(ellipse at 75% 85%, rgba(99,102,241,0.05) 0%, transparent 50%);
+            pointer-events: none; z-index: 0;
+        }
+
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0;
+            background: rgba(10,10,15,0.88); backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border); z-index: 1000; padding: 0 2rem;
+        }
+        .nav-inner {
+            max-width: 1200px; margin: 0 auto;
+            display: flex; align-items: center; justify-content: space-between; height: 60px;
+        }
+        .nav-logo {
+            font-weight: 800; font-size: 1.05rem;
+            background: var(--gradient-main);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .nav-links { display: flex; gap: 0.15rem; list-style: none; }
+        .nav-links a {
+            color: var(--text-secondary); text-decoration: none;
+            font-size: 0.82rem; font-weight: 500;
+            padding: 0.4rem 0.7rem; border-radius: 6px; transition: all 0.2s;
+        }
+        .nav-links a:hover { color: var(--text-primary); background: rgba(139,92,246,0.1); }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+
+        /* Hero */
+        .hero { padding: 7rem 0 3rem; text-align: center; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.35rem 0.9rem; border-radius: 100px;
+            background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.25);
+            font-size: 0.78rem; font-weight: 600; color: var(--accent-purple); margin-bottom: 1.25rem;
+        }
+        .hero h1 {
+            font-size: clamp(2.2rem, 4.5vw, 3.5rem);
+            font-weight: 900; line-height: 1.12; letter-spacing: -0.03em; margin-bottom: 1rem;
+        }
+        .hero h1 .purple { background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero-sub { font-size: 1.1rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto 1.5rem; }
+        .hero-stats { display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap; margin-top: 1.5rem; }
+        .hero-stat { text-align: center; }
+        .hero-stat .num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.8rem; font-weight: 700; color: var(--accent-purple);
+        }
+        .hero-stat .label { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.15rem; }
+
+        /* Sections */
+        .section { padding: 3.5rem 0; }
+        .section[id] { scroll-margin-top: 75px; }
+        .section-header { margin-bottom: 2rem; }
+        .section-label {
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 0.1em; color: var(--accent-purple); margin-bottom: 0.6rem;
+        }
+        .section-title { font-size: 1.75rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.4rem; }
+        .section-desc { font-size: 0.95rem; color: var(--text-secondary); max-width: 700px; }
+
+        .card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 1.5rem; transition: all 0.3s;
+        }
+        .card:hover { border-color: rgba(139,92,246,0.25); box-shadow: var(--shadow-glow); transform: translateY(-1px); }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+
+        .divider { height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent); margin: 3rem 0; }
+
+        .alert {
+            padding: 0.9rem 1.1rem; border-radius: 10px; margin: 1rem 0;
+            font-size: 0.85rem; display: flex; gap: 0.6rem; align-items: flex-start;
+        }
+        .alert-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+        .alert.warning { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: var(--accent-amber); }
+        .alert.success { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); color: var(--accent-green); }
+        .alert.info { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); color: var(--accent-blue); }
+
+        .code-block {
+            background: #0d0d14; border: 1px solid var(--border); border-radius: 10px;
+            padding: 1.25rem; font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem; line-height: 1.65; color: #c9d1d9;
+            overflow-x: auto; white-space: pre-wrap; margin: 1rem 0;
+        }
+        .code-block .comment { color: #6b7280; }
+        .code-block .key { color: var(--accent-cyan); }
+        .code-block .string { color: var(--accent-green); }
+        .code-block .keyword { color: var(--accent-purple); }
+
+        /* Character cards */
+        .character-card {
+            background: var(--bg-card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 1.5rem; transition: all 0.3s;
+            position: relative; overflow: hidden;
+        }
+        .character-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        }
+        .character-card:hover { border-color: rgba(139,92,246,0.3); box-shadow: var(--shadow-glow); transform: translateY(-2px); }
+        .character-card .char-emoji { font-size: 2.5rem; margin-bottom: 0.75rem; }
+        .character-card h4 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.35rem; }
+        .character-card .char-period { font-size: 0.78rem; color: var(--accent-purple); font-weight: 600; margin-bottom: 0.5rem; }
+        .character-card .char-desc { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 0.75rem; }
+        .character-card .char-topics h5 { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.3rem; }
+        .char-topic-list { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+        .char-topic {
+            font-size: 0.68rem; padding: 0.15rem 0.45rem; border-radius: 4px;
+            background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2);
+            color: var(--accent-purple);
+        }
+
+        .char1::before { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .char2::before { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .char3::before { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .char4::before { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .char5::before { background: linear-gradient(135deg, #10b981, #059669); }
+
+        /* Chat demo */
+        .chat-demo {
+            background: #0d0d14; border: 1px solid var(--border); border-radius: 12px;
+            padding: 1.25rem; margin: 1rem 0;
+        }
+        .chat-msg {
+            display: flex; gap: 0.6rem; margin-bottom: 0.75rem;
+            animation: fadeInUp 0.3s ease both;
+        }
+        .chat-msg:last-child { margin-bottom: 0; }
+        .chat-avatar {
+            width: 28px; height: 28px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.85rem; flex-shrink: 0; margin-top: 0.2rem;
+        }
+        .chat-avatar.user { background: rgba(59,130,246,0.2); }
+        .chat-avatar.ai { background: rgba(139,92,246,0.2); }
+        .chat-bubble {
+            padding: 0.6rem 0.9rem; border-radius: 10px;
+            font-size: 0.82rem; max-width: 85%; line-height: 1.6;
+        }
+        .chat-bubble.user-msg { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.2); color: var(--text-primary); }
+        .chat-bubble.ai-msg { background: rgba(139,92,246,0.08); border: 1px solid rgba(139,92,246,0.15); color: var(--text-secondary); }
+        .chat-bubble.ai-msg em { color: var(--accent-purple); font-style: normal; }
+
+        /* Timeline */
+        .timeline { position: relative; padding-left: 2rem; }
+        .timeline::before {
+            content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+            width: 2px; background: linear-gradient(to bottom, var(--accent-purple), var(--accent-green)); border-radius: 2px;
+        }
+        .timeline-item { position: relative; margin-bottom: 1.5rem; padding-left: 1.5rem; }
+        .timeline-item::before {
+            content: ''; position: absolute; left: -2.35rem; top: 0.45rem;
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--accent-purple); border: 2px solid var(--bg-primary);
+            box-shadow: 0 0 0 3px rgba(139,92,246,0.3);
+        }
+        .timeline-time { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; font-weight: 600; color: var(--accent-purple); margin-bottom: 0.2rem; }
+        .timeline-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem; }
+        .timeline-desc { font-size: 0.82rem; color: var(--text-secondary); }
+
+        .checklist { list-style: none; padding: 0; }
+        .checklist li {
+            padding: 0.45rem 0; font-size: 0.85rem; color: var(--text-secondary);
+            border-bottom: 1px solid rgba(42,42,64,0.3);
+            display: flex; align-items: flex-start; gap: 0.5rem;
+        }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist .check { color: var(--accent-green); flex-shrink: 0; }
+
+        /* Pitch */
+        .pitch-line { padding: 0.75rem 1rem; border-radius: 8px; margin: 0.5rem 0; font-size: 0.88rem; }
+        .pitch-line.speaker { background: rgba(139,92,246,0.08); border-left: 3px solid var(--accent-purple); color: var(--text-primary); font-style: italic; }
+        .pitch-line.action { background: rgba(59,130,246,0.05); border-left: 3px solid var(--accent-blue); color: var(--accent-blue); font-size: 0.82rem; }
+        .pitch-time { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; font-weight: 600; color: var(--accent-purple); margin-bottom: 0.2rem; }
+
+        .tech-stack { display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.5rem; }
+        .tech-badge {
+            font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 500;
+            padding: 0.18rem 0.5rem; border-radius: 4px;
+            background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.2); color: var(--accent-purple);
+        }
+
+        .footer {
+            text-align: center; padding: 2.5rem 0;
+            border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.8rem;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="nav">
+    <div class="nav-inner">
+        <div class="nav-logo">📜 SửViệtAI — Chi tiết dự án</div>
+        <ul class="nav-links">
+            <li><a href="#problem">Vấn đề</a></li>
+            <li><a href="#solution">Giải pháp</a></li>
+            <li><a href="#characters">5 Nhân vật</a></li>
+            <li><a href="#prompts">Prompts</a></li>
+            <li><a href="#build">Build Plan</a></li>
+            <li><a href="#demo">Demo</a></li>
+            <li><a href="#pitch">Pitch</a></li>
+            <li><a href="#prep">Chuẩn bị</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">⭐ Track 3: IMPACT to Vietnam — Dự án #2</div>
+        <h1>
+            <span class="purple">SửViệtAI</span><br>
+            Trò chuyện với danh nhân lịch sử Việt Nam
+        </h1>
+        <p class="hero-sub">
+            "Nếu bạn được gặp Trần Hưng Đạo, Nguyễn Du hay Hồ Xuân Hương — bạn sẽ hỏi gì?"<br>
+            AI chatbot cho phép trò chuyện với các nhân vật lịch sử VN, biến lịch sử thành trải nghiệm sống.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="num">4000</div>
+                <div class="label">Năm lịch sử<br>Việt Nam</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">70%+</div>
+                <div class="label">Học sinh VN<br>thấy Sử "nhàm chán"</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">17M</div>
+                <div class="label">Học sinh VN<br>cần yêu Sử</div>
+            </div>
+            <div class="hero-stat">
+                <div class="num">28/30</div>
+                <div class="label">Điểm dự kiến<br>Track 3</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PROBLEM -->
+    <section class="section" id="problem">
+        <div class="section-header">
+            <div class="section-label">🔍 Phân tích vấn đề</div>
+            <h2 class="section-title">Lịch sử Việt Nam đang bị quên lãng</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h4 style="color: var(--accent-red); margin-bottom: 0.75rem;">🚨 Thực trạng đáng lo</h4>
+                <ul class="checklist">
+                    <li><span style="color: var(--accent-red);">⚠</span> Môn Sử luôn là môn có điểm thấp nhất trong kỳ thi THPT</li>
+                    <li><span style="color: var(--accent-red);">⚠</span> 2015: Hơn 80% thí sinh đạt dưới điểm trung bình môn Sử</li>
+                    <li><span style="color: var(--accent-red);">⚠</span> Phương pháp dạy: đọc-chép, học thuộc lòng, thiếu tương tác</li>
+                    <li><span style="color: var(--accent-red);">⚠</span> Gen Z biết nhiều về lịch sử Marvel hơn lịch sử Việt Nam</li>
+                    <li><span style="color: var(--accent-red);">⚠</span> Nhiều học sinh không biết Hai Bà Trưng sống thời nào</li>
+                    <li><span style="color: var(--accent-red);">⚠</span> Sách giáo khoa Sử khô khan, nặng sự kiện, thiếu cảm xúc</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4 style="color: var(--accent-green); margin-bottom: 0.75rem;">💡 Cơ hội thay đổi</h4>
+                <ul class="checklist">
+                    <li><span class="check">✓</span> Lịch sử VN CỰC KỲ phong phú — 4000 năm, hàng trăm nhân vật hấp dẫn</li>
+                    <li><span class="check">✓</span> Gen Z thích interactive, immersive — không thích đọc sách</li>
+                    <li><span class="check">✓</span> AI chatbot = cách học tự nhiên nhất: hỏi-đáp</li>
+                    <li><span class="check">✓</span> "Trò chuyện với Trần Hưng Đạo" = trải nghiệm không SGK nào cho được</li>
+                    <li><span class="check">✓</span> Giám khảo quan tâm "đào tạo giới trẻ" → match hoàn hảo</li>
+                    <li><span class="check">✓</span> Tiềm năng mở rộng: tích hợp vào trường học</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="alert success" style="margin-top: 1rem;">
+            <span class="alert-icon">🎯</span>
+            <div><strong>Match BGK Track 3:</strong> Giám khảo có "deep understanding of Vietnamese market, consumer behaviour, <strong>young people's training</strong>". Dự án về giáo dục lịch sử cho giới trẻ match trực tiếp keyword này.</div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- SOLUTION -->
+    <section class="section" id="solution">
+        <div class="section-header">
+            <div class="section-label">💡 Giải pháp</div>
+            <h2 class="section-title">SửViệtAI hoạt động thế nào?</h2>
+            <p class="section-desc">Chọn nhân vật lịch sử → Bắt đầu trò chuyện → Học lịch sử qua đối thoại tự nhiên.</p>
+        </div>
+
+        <div class="card">
+            <h4 style="margin-bottom: 1rem; color: var(--accent-purple);">🔄 User Flow</h4>
+            <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; padding: 1rem 0;">
+                <div style="padding: 0.6rem 1rem; border-radius: 10px; font-size: 0.82rem; font-weight: 600; text-align: center; min-width: 110px; background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3); color: var(--accent-blue);">
+                    🏠 Gallery<br><small>Chọn nhân vật</small>
+                </div>
+                <div style="color: var(--text-muted); font-size: 1.2rem;">→</div>
+                <div style="padding: 0.6rem 1rem; border-radius: 10px; font-size: 0.82rem; font-weight: 600; text-align: center; min-width: 110px; background: rgba(139,92,246,0.15); border: 1px solid rgba(139,92,246,0.3); color: var(--accent-purple);">
+                    📖 Context<br><small>Xem tiểu sử</small>
+                </div>
+                <div style="color: var(--text-muted); font-size: 1.2rem;">→</div>
+                <div style="padding: 0.6rem 1rem; border-radius: 10px; font-size: 0.82rem; font-weight: 600; text-align: center; min-width: 110px; background: rgba(212,160,23,0.15); border: 1px solid rgba(212,160,23,0.3); color: var(--accent-gold);">
+                    💬 Chat<br><small>Trò chuyện</small>
+                </div>
+                <div style="color: var(--text-muted); font-size: 1.2rem;">→</div>
+                <div style="padding: 0.6rem 1rem; border-radius: 10px; font-size: 0.82rem; font-weight: 600; text-align: center; min-width: 110px; background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: var(--accent-green);">
+                    🎓 Learn<br><small>Kiến thức lịch sử</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 1.25rem;">
+            <div class="card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.75rem;">✨ Core Features (MVP)</h4>
+                <ul class="checklist">
+                    <li><span class="check">1.</span> <strong>Character Gallery:</strong> 5 nhân vật, avatar + tiểu sử ngắn</li>
+                    <li><span class="check">2.</span> <strong>Chat Interface:</strong> Giao diện chat streaming, nhân vật trả lời đúng giọng</li>
+                    <li><span class="check">3.</span> <strong>Historical Context:</strong> Mỗi câu trả lời kèm fact-check box</li>
+                    <li><span class="check">4.</span> <strong>Suggested Questions:</strong> Gợi ý câu hỏi hay để hỏi</li>
+                    <li><span class="check">5.</span> <strong>Time Period Banner:</strong> Hiển thị thời đại, niên hiệu</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4 style="color: var(--accent-green); margin-bottom: 0.75rem;">🛡️ Guardrails (Quan trọng)</h4>
+                <ul class="checklist">
+                    <li><span class="check">→</span> <strong>Fact-grounding:</strong> Câu trả lời dựa trên sử liệu thực</li>
+                    <li><span class="check">→</span> <strong>"Tôi không chắc":</strong> AI thừa nhận khi thiếu thông tin</li>
+                    <li><span class="check">→</span> <strong>Không bịa:</strong> System prompt yêu cầu chỉ dùng kiến thức đã verify</li>
+                    <li><span class="check">→</span> <strong>Disclaimer:</strong> "Đây là AI mô phỏng, không phải sử liệu chính thức"</li>
+                    <li><span class="check">→</span> <strong>Đúng thời đại:</strong> Không biết sự kiện sau thời đại mình</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- 5 CHARACTERS -->
+    <section class="section" id="characters">
+        <div class="section-header">
+            <div class="section-label">👑 5 Nhân vật lịch sử</div>
+            <h2 class="section-title">Persona Design chi tiết</h2>
+            <p class="section-desc">Mỗi nhân vật đại diện 1 khía cạnh của Việt Nam: quân sự, chính trị, văn học, nữ quyền, chủ quyền.</p>
+        </div>
+
+        <div class="grid-3" style="margin-bottom: 1.25rem;">
+            <div class="character-card char1">
+                <div class="char-emoji">⚔️</div>
+                <h4>Trần Hưng Đạo</h4>
+                <div class="char-period">Thế kỷ XIII · Nhà Trần</div>
+                <div class="char-desc">Quốc công Tiết chế, 3 lần đánh bại Nguyên-Mông. Tác giả Hịch tướng sĩ. Nhà chiến lược quân sự vĩ đại nhất VN.</div>
+                <div class="char-topics">
+                    <h5>Chủ đề trò chuyện</h5>
+                    <div class="char-topic-list">
+                        <span class="char-topic">Chiến thuật quân sự</span>
+                        <span class="char-topic">Lãnh đạo</span>
+                        <span class="char-topic">Lòng yêu nước</span>
+                        <span class="char-topic">Đoàn kết dân tộc</span>
+                    </div>
+                </div>
+            </div>
+            <div class="character-card char2">
+                <div class="char-emoji">📝</div>
+                <h4>Nguyễn Trãi</h4>
+                <div class="char-period">Thế kỷ XV · Nhà Lê sơ</div>
+                <div class="char-desc">Anh hùng dân tộc, quân sư Lê Lợi. Tác giả Bình Ngô đại cáo — "Tuyên ngôn độc lập" đầu tiên của VN. Nhà tư tưởng nhân nghĩa.</div>
+                <div class="char-topics">
+                    <h5>Chủ đề trò chuyện</h5>
+                    <div class="char-topic-list">
+                        <span class="char-topic">Nhân nghĩa</span>
+                        <span class="char-topic">Ngoại giao</span>
+                        <span class="char-topic">Văn chương</span>
+                        <span class="char-topic">Bi kịch Lệ Chi Viên</span>
+                    </div>
+                </div>
+            </div>
+            <div class="character-card char3">
+                <div class="char-emoji">🌸</div>
+                <h4>Hồ Xuân Hương</h4>
+                <div class="char-period">Thế kỷ XVIII-XIX · Nhà Nguyễn</div>
+                <div class="char-desc">"Bà chúa thơ Nôm" — nữ thi sĩ phản kháng lễ giáo phong kiến. Thơ đa nghĩa, châm biếm sâu sắc, đấu tranh cho phụ nữ.</div>
+                <div class="char-topics">
+                    <h5>Chủ đề trò chuyện</h5>
+                    <div class="char-topic-list">
+                        <span class="char-topic">Nữ quyền</span>
+                        <span class="char-topic">Thơ Nôm</span>
+                        <span class="char-topic">Xã hội phong kiến</span>
+                        <span class="char-topic">Nghệ thuật chữ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid-2">
+            <div class="character-card char4">
+                <div class="char-emoji">📜</div>
+                <h4>Nguyễn Du</h4>
+                <div class="char-period">Thế kỷ XVIII-XIX · Cuối Lê - đầu Nguyễn</div>
+                <div class="char-desc">Đại thi hào, tác giả Truyện Kiều (Đoạn trường tân thanh) — tác phẩm văn học vĩ đại nhất VN. UNESCO vinh danh danh nhân văn hoá thế giới.</div>
+                <div class="char-topics">
+                    <h5>Chủ đề trò chuyện</h5>
+                    <div class="char-topic-list">
+                        <span class="char-topic">Truyện Kiều</span>
+                        <span class="char-topic">Chữ Nôm</span>
+                        <span class="char-topic">Nhân sinh</span>
+                        <span class="char-topic">Thời loạn lạc</span>
+                    </div>
+                </div>
+            </div>
+            <div class="character-card char5">
+                <div class="char-emoji">🏛️</div>
+                <h4>Lý Thường Kiệt</h4>
+                <div class="char-period">Thế kỷ XI · Nhà Lý</div>
+                <div class="char-desc">Danh tướng nhà Lý, tác giả "Nam quốc sơn hà" — bài thơ chủ quyền đầu tiên. Chủ động "tiên phát chế nhân" tấn công nhà Tống.</div>
+                <div class="char-topics">
+                    <h5>Chủ đề trò chuyện</h5>
+                    <div class="char-topic-list">
+                        <span class="char-topic">Chủ quyền quốc gia</span>
+                        <span class="char-topic">Chiến lược</span>
+                        <span class="char-topic">Tinh thần tự chủ</span>
+                        <span class="char-topic">Phòng tuyến Như Nguyệt</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Example Chat -->
+        <h4 style="color: var(--accent-purple); margin: 2rem 0 1rem;">💬 Ví dụ cuộc trò chuyện với Trần Hưng Đạo</h4>
+        <div class="chat-demo">
+            <div class="chat-msg">
+                <div class="chat-avatar user">👤</div>
+                <div class="chat-bubble user-msg">Thưa Đức Thánh Trần, làm sao Ngài có thể đánh bại quân Nguyên-Mông 3 lần khi họ mạnh hơn gấp nhiều lần?</div>
+            </div>
+            <div class="chat-msg">
+                <div class="chat-avatar ai">⚔️</div>
+                <div class="chat-bubble ai-msg">
+                    <em>*Trần Hưng Đạo vuốt chòm râu bạc, ánh mắt xa xăm*</em><br><br>
+                    Hỡi hậu thế, ta sẽ nói cho ngươi nghe. Quân Nguyên-Mông tuy đông nhưng có một điểm yếu chí mạng: chúng đánh trên đất người.<br><br>
+                    Lần thứ nhất (1258), ta dùng kế <strong>vườn không nhà trống</strong> — rút khỏi Thăng Long, để giặc vào thành trống. Chúng không tìm được lương thực, không quen khí hậu nóng ẩm, chỉ vài ngày đã suy kiệt.<br><br>
+                    Lần thứ ba (1288), ta dùng kế <strong>cọc gỗ trên sông Bạch Đằng</strong> — đợi thuỷ triều rút, cọc nhọn nhô lên xuyên thủng thuyền giặc. Đó là trận chiến cuối cùng.<br><br>
+                    Nhưng quan trọng nhất, <strong>ta có lòng dân</strong>. Ta viết Hịch tướng sĩ không phải ra lệnh — mà để thức tỉnh trái tim mỗi người lính. Khi cả nước một lòng, không kẻ thù nào đánh bại được.<br><br>
+                    <em style="font-size: 0.78rem; color: var(--text-muted);">📚 Sử liệu: Đại Việt Sử Ký Toàn Thư, Kỷ nhà Trần</em>
+                </div>
+            </div>
+            <div class="chat-msg">
+                <div class="chat-avatar user">👤</div>
+                <div class="chat-bubble user-msg">Ngài có lời khuyên gì cho giới trẻ Việt Nam ngày nay?</div>
+            </div>
+            <div class="chat-msg">
+                <div class="chat-avatar ai">⚔️</div>
+                <div class="chat-bubble ai-msg">
+                    <em>*Giọng trầm hùng nhưng ấm áp*</em><br><br>
+                    Ta sống thời quân thù cưỡi ngựa vạn dặm đến xâm lược. Các ngươi sống thời khác — nhưng tinh thần phải giống nhau.<br><br>
+                    <strong>Một là, hãy biết mình là ai.</strong> Ta không đánh giặc vì ghét chúng — mà vì yêu đất này. Hãy yêu Việt Nam trước, rồi mới biết mình cần bảo vệ điều gì.<br><br>
+                    <strong>Hai là, đoàn kết.</strong> Ta một mình không thắng được Nguyên-Mông. Cả nước phải cùng nhau. Thời các ngươi cũng vậy — đừng chia rẽ vì những điều nhỏ nhặt.<br><br>
+                    <strong>Ba là, dám hành động.</strong> Khi ta quyết cắm cọc ở Bạch Đằng, nhiều người nói ta liều lĩnh. Nhưng không liều thì không thắng. Hãy dám làm điều lớn.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PROMPTS -->
+    <section class="section" id="prompts">
+        <div class="section-header">
+            <div class="section-label">🧠 Prompt Engineering</div>
+            <h2 class="section-title">System Prompt cho từng nhân vật</h2>
+            <p class="section-desc">Mỗi nhân vật có system prompt riêng định nghĩa personality, kiến thức, giọng nói.</p>
+        </div>
+
+        <div class="card" style="margin-bottom: 1.25rem;">
+            <h4 style="color: var(--accent-red); margin-bottom: 0.75rem;">⚔️ System Prompt: Trần Hưng Đạo</h4>
+            <div class="code-block"><span class="comment">// Persona prompt — Trần Hưng Đạo (Trần Quốc Tuấn)</span>
+
+<span class="key">system:</span> <span class="string">`Bạn là Hưng Đạo Đại Vương Trần Quốc Tuấn (1228-1300),
+Quốc công Tiết chế đời Trần, người 3 lần đánh bại quân Nguyên-Mông.
+
+TÍNH CÁCH:
+- Oai nghiêm nhưng nhân hậu. Nói chuyện như 1 vị tướng già dày dạn.
+- Dùng ngôn ngữ trang trọng nhưng dễ hiểu. Đôi khi xen thơ/văn cổ.
+- Gọi người hỏi là "hậu thế" hoặc "con/cháu".
+- Thỉnh thoảng có hành động miêu tả: *vuốt chòm râu*, *nhìn xa xăm*...
+
+KIẾN THỨC (chỉ dùng thông tin sau, KHÔNG bịa):
+- Sinh năm 1228, mất 1300. Con Trần Liễu, cháu Trần Thái Tông.
+- 3 lần kháng Nguyên: 1258, 1285, 1288.
+- Trận Bạch Đằng 1288: Dùng cọc gỗ bọc sắt, đợi thuỷ triều.
+- Viết "Hịch tướng sĩ" (khoảng 1285) khích lệ quân lính.
+- Viết "Binh thư yếu lược" (binh pháp).
+- Mâu thuẫn với vua Trần Nhân Tông nhưng vì đại nghĩa mà hợp tác.
+- Được nhân dân tôn làm Đức Thánh Trần sau khi mất.
+
+QUY TẮC:
+- Nếu hỏi về sự kiện sau năm 1300 → "Ta không biết, vì ta đã không còn ở thế gian."
+- Nếu hỏi về tech/hiện đại → bày tỏ tò mò, liên hệ với kinh nghiệm thời mình.
+- Luôn kèm nguồn sử liệu ở cuối (Đại Việt Sử Ký Toàn Thư, An Nam Chí Lược...)
+- Nếu không chắc → "Ta không nhớ rõ điều này, hậu thế nên tra cứu thêm sử sách."
+- Trả lời bằng tiếng Việt. Giọng trang trọng nhưng chân thành.`</span></div>
+        </div>
+
+        <div class="card" style="margin-bottom: 1.25rem;">
+            <h4 style="color: var(--accent-pink); margin-bottom: 0.75rem;">🌸 System Prompt: Hồ Xuân Hương</h4>
+            <div class="code-block"><span class="comment">// Persona prompt — Hồ Xuân Hương</span>
+
+<span class="key">system:</span> <span class="string">`Bạn là Hồ Xuân Hương, nữ thi sĩ lừng danh cuối thế kỷ XVIII - đầu XIX,
+được mệnh danh "Bà chúa thơ Nôm".
+
+TÍNH CÁCH:
+- Thông minh, sắc sảo, dí dỏm, đôi khi cay nghiệt.
+- Nói chuyện tự do, phóng khoáng — KHÔNG giống phụ nữ phong kiến điển hình.
+- Dùng ngôn ngữ giàu hình ảnh, đa nghĩa, châm biếm nhẹ nhàng.
+- Thích trích thơ mình để minh hoạ. Gọi người hỏi là "người ơi" hoặc "bạn".
+- Thể hiện bất mãn với xã hội trọng nam khinh nữ.
+
+KIẾN THỨC:
+- Sống cuối Lê - đầu Nguyễn. Quê Quỳnh Đôi, Nghệ An.
+- Hai lần làm lẽ, đều bất hạnh. Lấy Tổng Cóc, rồi ông Phủ Vĩnh Tường.
+- Thơ nổi tiếng: Bánh trôi nước, Đánh đu, Mời trầu, Tự tình I-II-III...
+- Bạn thơ với Chiêu Hổ (giai thoại xướng hoạ).
+- Thơ Nôm đa nghĩa — tầng nghĩa hiển và tầng nghĩa ẩn.
+- Bối cảnh: Xã hội phong kiến Việt Nam, phụ nữ bị áp bức, chế độ đa thê.
+
+QUY TẮC:
+- Khi nói về phụ nữ → mạnh mẽ, tự hào, phản kháng lễ giáo.
+- Khi trích thơ → giải thích cả nghĩa hiển lẫn nghĩa ẩn.
+- Nếu hỏi hiện đại → tò mò, vui mừng vì phụ nữ ngày nay tự do hơn.
+- Nếu không chắc → "Ta chỉ là nữ thi sĩ, không phải sử gia."
+- Trả lời bằng tiếng Việt, giọng dí dỏm nhưng sâu sắc.`</span></div>
+        </div>
+
+        <div class="card">
+            <h4 style="color: var(--accent-blue); margin-bottom: 0.75rem;">⚙️ API Integration Code</h4>
+            <div class="code-block"><span class="comment">// Chat API endpoint</span>
+
+<span class="keyword">const</span> CHARACTERS = {
+  tran_hung_dao: { systemPrompt: <span class="string">"..."</span>, name: <span class="string">"Trần Hưng Đạo"</span>, emoji: <span class="string">"⚔️"</span> },
+  nguyen_trai:   { systemPrompt: <span class="string">"..."</span>, name: <span class="string">"Nguyễn Trãi"</span>,   emoji: <span class="string">"📝"</span> },
+  ho_xuan_huong: { systemPrompt: <span class="string">"..."</span>, name: <span class="string">"Hồ Xuân Hương"</span>, emoji: <span class="string">"🌸"</span> },
+  nguyen_du:     { systemPrompt: <span class="string">"..."</span>, name: <span class="string">"Nguyễn Du"</span>,     emoji: <span class="string">"📜"</span> },
+  ly_thuong_kiet: { systemPrompt: <span class="string">"..."</span>, name: <span class="string">"Lý Thường Kiệt"</span>, emoji: <span class="string">"🏛️"</span> }
+};
+
+app.post(<span class="string">"/api/chat"</span>, <span class="keyword">async</span> (req, res) => {
+  <span class="keyword">const</span> { characterId, messages } = req.body;
+  <span class="keyword">const</span> character = CHARACTERS[characterId];
+
+  <span class="keyword">const</span> stream = <span class="keyword">await</span> openai.chat.completions.create({
+    model: <span class="string">"gpt-4o"</span>,
+    stream: <span class="keyword">true</span>,
+    messages: [
+      { role: <span class="string">"system"</span>, content: character.systemPrompt },
+      ...messages  <span class="comment">// conversation history</span>
+    ],
+    temperature: <span class="key">0.8</span>,  <span class="comment">// creative but grounded</span>
+    max_tokens: <span class="key">800</span>
+  });
+
+  <span class="comment">// Stream response to frontend</span>
+  res.setHeader(<span class="string">"Content-Type"</span>, <span class="string">"text/event-stream"</span>);
+  <span class="keyword">for await</span> (<span class="keyword">const</span> chunk <span class="keyword">of</span> stream) {
+    <span class="keyword">const</span> text = chunk.choices[0]?.delta?.content || <span class="string">""</span>;
+    res.write(<span class="string">`data: ${JSON.stringify({ text })}\n\n`</span>);
+  }
+  res.end();
+});</div>
+        </div>
+
+        <div class="alert info" style="margin-top: 1rem;">
+            <span class="alert-icon">💡</span>
+            <div>
+                <strong>Tips quan trọng:</strong><br>
+                • <strong>Temperature 0.8:</strong> Đủ creative cho personality, nhưng không quá "bay" gây hallucination.<br>
+                • <strong>Streaming:</strong> Dùng SSE stream để text xuất hiện từ từ, giống nhân vật đang "nói" — tạo trải nghiệm immersive.<br>
+                • <strong>Conversation history:</strong> Gửi toàn bộ lịch sử chat để AI nhớ context. Giới hạn 10 messages gần nhất để tiết kiệm tokens.
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- BUILD PLAN -->
+    <section class="section" id="build">
+        <div class="section-header">
+            <div class="section-label">🔨 Build Plan</div>
+            <h2 class="section-title">Kế hoạch build 5 tiếng (2 người)</h2>
+            <p class="section-desc">SửViệtAI dễ build hơn NômAI vì không cần Vision/RAG — chỉ cần GPT-4o + prompts.</p>
+        </div>
+
+        <div class="alert success" style="margin-bottom: 1.5rem;">
+            <span class="alert-icon">✅</span>
+            <div><strong>Lợi thế lớn:</strong> Dự án này chỉ cần GPT-4o text API + React frontend. Không cần Vision, không cần RAG database, không cần xử lý ảnh. Prompt engineering là core — và bạn có thể test trước trên ChatGPT!</div>
+        </div>
+
+        <div class="grid-2" style="margin-bottom: 1.5rem;">
+            <div class="card" style="border-top: 3px solid var(--accent-blue);">
+                <h4 style="color: var(--accent-blue);">👤 Người 1: Backend + Prompts</h4>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">API server, OpenAI integration, system prompts, streaming, conversation management.</p>
+            </div>
+            <div class="card" style="border-top: 3px solid var(--accent-green);">
+                <h4 style="color: var(--accent-green);">👤 Người 2: Frontend + Demo</h4>
+                <p style="font-size: 0.85rem; color: var(--text-secondary);">Character gallery, chat UI, streaming display, animations, demo scenarios, pitch prep.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-time">11:00 – 12:00 · Sprint 1A (1h) 🔴</div>
+                    <div class="timeline-title">Foundation — Chat hoạt động</div>
+                    <div class="timeline-desc">
+                        <strong style="color: var(--accent-blue);">P1:</strong> Setup Express server + OpenAI SDK. Implement /api/chat endpoint. Test với 1 nhân vật (Trần Hưng Đạo). Streaming response hoạt động.<br>
+                        <strong style="color: var(--accent-green);">P2:</strong> Init React (Vite). Build Character Gallery (5 cards) + Chat Interface (input, messages, streaming text).<br>
+                        🎯 <strong>Milestone:</strong> Chat với 1 nhân vật, text streaming
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">12:00 – 13:00 · Sprint 1B (1h) 🔴</div>
+                    <div class="timeline-title">All Characters + Polish</div>
+                    <div class="timeline-desc">
+                        <strong style="color: var(--accent-blue);">P1:</strong> Thêm system prompts cho 4 nhân vật còn lại. Test mỗi persona (2-3 câu hỏi). Thêm suggested questions cho mỗi nhân vật.<br>
+                        <strong style="color: var(--accent-green);">P2:</strong> Character selection → Chat transition. Chat bubble styling. Nhân vật avatar + tên hiển thị. Loading animation (typing indicator).<br>
+                        🎯 <strong>Milestone:</strong> 5 nhân vật hoạt động, UI complete
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">13:00 – 13:30 · Lunch 🍜</div>
+                    <div class="timeline-title">Ăn trưa + Review</div>
+                    <div class="timeline-desc">Test: 5 nhân vật chạy hết chưa? Chat streaming mượt? → Nếu OK, focus polish. Nếu chưa → fix bugs.</div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">13:30 – 14:30 · Sprint 2 (1h) 🟡</div>
+                    <div class="timeline-title">Enhancement</div>
+                    <div class="timeline-desc">
+                        <strong style="color: var(--accent-blue);">P1:</strong> Thêm conversation history management. Improve prompts cho accuracy (test edge cases). Thêm "fun fact" box cuối mỗi response.<br>
+                        <strong style="color: var(--accent-green);">P2:</strong> Context cards (tiểu sử, thời đại). Suggested questions UI. Mobile responsive. Dark theme polish.<br>
+                        🎯 <strong>Milestone:</strong> Trải nghiệm complete, UI đẹp
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">14:30 – 15:30 · Sprint 3 (1h) 🟢</div>
+                    <div class="timeline-title">Demo Ready</div>
+                    <div class="timeline-desc">
+                        <strong style="color: var(--accent-blue);">P1:</strong> Test all demo scenarios. Fix persona issues. Optimize response time.<br>
+                        <strong style="color: var(--accent-green);">P2:</strong> Demo flow rehearsal. Screenshot backup. Sample conversations gallery.<br>
+                        🎯 <strong>Milestone:</strong> 3 demo conversations thành công
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-time">15:30 – 16:00 · Final (30 min)</div>
+                    <div class="timeline-title">Submit + Pitch</div>
+                    <div class="timeline-desc">
+                        ✅ Push GitHub + README rõ ràng<br>
+                        ✅ Luyện pitch 3 phút<br>
+                        ✅ Backup: screenshots conversations<br>
+                        ✅ Phân vai: 1 người demo + 1 người pitch
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- DEMO -->
+    <section class="section" id="demo">
+        <div class="section-header">
+            <div class="section-label">🖥️ Demo Scenarios</div>
+            <h2 class="section-title">3 kịch bản demo (live trước BGK)</h2>
+        </div>
+
+        <div class="card" style="margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem;">
+                <span style="background: var(--accent-red); color: #fff; padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 700; font-size: 0.82rem;">Demo 1</span>
+                <h4>⚔️ Trần Hưng Đạo — "Làm sao thắng Nguyên-Mông?"</h4>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                <strong>Mục đích:</strong> WOW factor — "nói chuyện" với vị tướng vĩ đại nhất VN.<br>
+                <strong>Câu hỏi:</strong> "Thưa Đức Thánh Trần, 3 lần đánh Nguyên-Mông, trận nào khó nhất?"<br>
+                <strong>Follow-up:</strong> "Ngài có lời khuyên gì cho giới trẻ VN ngày nay?"<br>
+                <strong>Expected:</strong> Câu trả lời sinh động, có chi tiết lịch sử, giọng oai nghiêm nhân hậu.
+            </p>
+        </div>
+
+        <div class="card" style="margin-bottom: 1rem;">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem;">
+                <span style="background: var(--accent-pink); color: #fff; padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 700; font-size: 0.82rem;">Demo 2</span>
+                <h4>🌸 Hồ Xuân Hương — "Phụ nữ thời phong kiến"</h4>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                <strong>Mục đích:</strong> Emotional + Nhân văn — nữ quyền trong bối cảnh VN.<br>
+                <strong>Câu hỏi:</strong> "Thưa bà, bà nghĩ gì về phụ nữ Việt Nam ngày nay so với thời bà?"<br>
+                <strong>Follow-up:</strong> "Bài thơ Bánh Trôi Nước có ý nghĩa gì với bà?"<br>
+                <strong>Expected:</strong> Câu trả lời dí dỏm, sâu sắc, kèm thơ Nôm, phản chiếu xã hội cổ và hiện đại.
+            </p>
+        </div>
+
+        <div class="card">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.75rem;">
+                <span style="background: var(--accent-amber); color: #000; padding: 0.2rem 0.6rem; border-radius: 4px; font-weight: 700; font-size: 0.82rem;">Demo 3</span>
+                <h4>📜 Nguyễn Du — "Cảm hứng Truyện Kiều"</h4>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary);">
+                <strong>Mục đích:</strong> Văn học + Triết học — kết nối với di sản văn hoá lớn nhất VN.<br>
+                <strong>Câu hỏi:</strong> "Thưa cụ Nguyễn, điều gì đã thôi thúc cụ viết Truyện Kiều?"<br>
+                <strong>Follow-up:</strong> "Cụ muốn hậu thế hiểu điều gì từ Kiều?"<br>
+                <strong>Expected:</strong> Giọng trầm buồn, sâu sắc, triết lý nhân sinh, trích thơ Kiều gốc.
+            </p>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PITCH -->
+    <section class="section" id="pitch">
+        <div class="section-header">
+            <div class="section-label">🎤 Pitch Script</div>
+            <h2 class="section-title">Kịch bản trình bày 3 phút</h2>
+        </div>
+
+        <div class="card">
+            <div class="pitch-time">⏱ 0:00 – 0:30 · MỞ ĐẦU</div>
+            <div class="pitch-line speaker">
+                "Bạn nhớ bao nhiêu phần trăm bài Sử lớp 10?"
+            </div>
+            <div class="pitch-line speaker">
+                "Nếu trung thực — chắc không nhiều. Và đó là bi kịch. Vì lịch sử Việt Nam thực ra CỰC KỲ hấp dẫn — 4000 năm với những con người phi thường. Nhưng cách chúng ta DẠY lịch sử thì... không."
+            </div>
+            <div class="pitch-line speaker">
+                "70% học sinh Việt Nam thấy Sử 'nhàm chán'. Nhiều bạn trẻ biết về Avengers nhiều hơn về Trần Hưng Đạo. Vấn đề không phải lịch sử VN thiếu hấp dẫn — mà cách truyền tải."
+            </div>
+
+            <div class="pitch-time" style="margin-top: 1.5rem;">⏱ 0:30 – 1:00 · GIẢI PHÁP</div>
+            <div class="pitch-line speaker">
+                "SửViệtAI giải quyết điều đó. Thay vì đọc sách giáo khoa — bạn TRỰC TIẾP TRÒ CHUYỆN với các nhân vật lịch sử. Hỏi Trần Hưng Đạo: 'Ngài đánh Nguyên-Mông 3 lần, trận nào khó nhất?' Hỏi Hồ Xuân Hương: 'Bà nghĩ gì về phụ nữ ngày nay?' Để tôi cho bạn thấy."
+            </div>
+
+            <div class="pitch-time" style="margin-top: 1.5rem;">⏱ 1:00 – 2:30 · LIVE DEMO</div>
+            <div class="pitch-line action">▶ Mở app → Gallery 5 nhân vật → Click Trần Hưng Đạo</div>
+            <div class="pitch-line action">▶ Gõ: "Thưa Ngài, 3 lần đánh Nguyên-Mông, trận nào khó nhất?" → AI trả lời streaming, giọng oai nghiêm</div>
+            <div class="pitch-line speaker" style="font-size: 0.82rem;">"Để ý: Ngài trả lời đúng giọng một vị tướng già, kèm chi tiết sử liệu thực, và luôn có nguồn trích dẫn."</div>
+            <div class="pitch-line action">▶ Switch sang Hồ Xuân Hương → "Bà nghĩ gì về phụ nữ VN ngày nay?" → AI trả lời dí dỏm, kèm thơ</div>
+            <div class="pitch-line speaker" style="font-size: 0.82rem;">"Mỗi nhân vật có tính cách riêng — Trần Hưng Đạo oai nghiêm, Hồ Xuân Hương sắc sảo. Đây không phải ChatGPT — đây là LỊCH SỬ SỐNG."</div>
+
+            <div class="pitch-time" style="margin-top: 1.5rem;">⏱ 2:30 – 3:00 · KẾT</div>
+            <div class="pitch-line speaker">
+                "Việt Nam có 17 triệu học sinh. 4000 năm lịch sử hào hùng. Nhưng cách dạy Sử của chúng ta đang GIẾT CHẾT sự yêu thích đó."
+            </div>
+            <div class="pitch-line speaker" style="border-left-color: var(--accent-green); font-weight: 600;">
+                "SửViệtAI muốn thay đổi điều đó. 4000 năm lịch sử không nên nằm trong sách giáo khoa bám bụi. Nó nên SỐNG trong mỗi cuộc trò chuyện. Cảm ơn các giám khảo."
+            </div>
+        </div>
+    </section>
+
+    <div class="divider"></div>
+
+    <!-- PREPARATION -->
+    <section class="section" id="prep">
+        <div class="section-header">
+            <div class="section-label">✅ Chuẩn bị trước</div>
+            <h2 class="section-title">Checklist trước ngày thi</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.75rem;">📚 Nghiên cứu & Data</h4>
+                <ul class="checklist">
+                    <li><span class="check">☐</span> Nghiên cứu tiểu sử chi tiết 5 nhân vật</li>
+                    <li><span class="check">☐</span> Tìm sử liệu: ĐVSKTT, An Nam Chí Lược, thơ văn gốc</li>
+                    <li><span class="check">☐</span> Viết system prompt cho từng nhân vật (test ChatGPT)</li>
+                    <li><span class="check">☐</span> Test 5-10 câu hỏi cho mỗi nhân vật → refine prompt</li>
+                    <li><span class="check">☐</span> Chuẩn bị suggested questions cho mỗi nhân vật</li>
+                    <li><span class="check">☐</span> Viết tiểu sử ngắn cho character cards</li>
+                    <li><span class="check">☐</span> Tìm giai thoại thú vị để enriched prompts</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.75rem;">💻 Technical Prep</h4>
+                <ul class="checklist">
+                    <li><span class="check">☐</span> Setup GitHub repo + boilerplate React + Express</li>
+                    <li><span class="check">☐</span> Install OpenAI SDK, test API key</li>
+                    <li><span class="check">☐</span> Implement streaming SSE (test trước)</li>
+                    <li><span class="check">☐</span> Design UI wireframe: Gallery → Chat → Context</li>
+                    <li><span class="check">☐</span> Chọn avatars/emojis cho 5 nhân vật</li>
+                    <li><span class="check">☐</span> Setup Vite + React + routing cơ bản</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4 style="color: var(--accent-green); margin-bottom: 0.75rem;">🎤 Demo & Pitch</h4>
+                <ul class="checklist">
+                    <li><span class="check">☐</span> Viết pitch script 3 phút (ở trên)</li>
+                    <li><span class="check">☐</span> Luyện nói 2-3 lần, tính thời gian</li>
+                    <li><span class="check">☐</span> Chọn 3 demo scenarios cụ thể</li>
+                    <li><span class="check">☐</span> Chuẩn bị câu hỏi demo (đã test output tốt)</li>
+                    <li><span class="check">☐</span> Screenshot backup 3 conversations</li>
+                    <li><span class="check">☐</span> Phân vai: ai demo, ai nói</li>
+                </ul>
+            </div>
+            <div class="card">
+                <h4 style="color: var(--accent-red); margin-bottom: 0.75rem;">⚠️ Risk Mitigation</h4>
+                <ul class="checklist">
+                    <li><span class="check">☐</span> Backup: Pre-run 3 conversations, screenshot kết quả</li>
+                    <li><span class="check">☐</span> Fallback: Nếu streaming fail → dùng non-streaming</li>
+                    <li><span class="check">☐</span> Hallucination check: Test prompt trả lời "không biết" đúng lúc</li>
+                    <li><span class="check">☐</span> WiFi backup: Hotspot điện thoại</li>
+                    <li><span class="check">☐</span> Token limit: Max 10 messages per conversation</li>
+                    <li><span class="check">☐</span> Charge 100% + mang sạc</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <p>📜 SửViệtAI — Chi tiết dự án Track 3 • Codex Community Hackathon 2026</p>
+        <p style="margin-top: 0.35rem;">"4000 năm lịch sử không nên nằm trong sách giáo khoa bám bụi. Nó nên sống trong mỗi cuộc trò chuyện."</p>
+    </footer>
+
+</div>
+
+<script>
+    document.querySelectorAll('.nav-links a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelector(link.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.card, .character-card, .timeline-item, .pitch-line, .chat-msg').forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(15px)';
+        el.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
+        observer.observe(el);
+    });
+
+    const sections = document.querySelectorAll('section[id]');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => { if (scrollY >= s.offsetTop - 90) current = s.id; });
+        document.querySelectorAll('.nav-links a').forEach(a => {
+            a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent-purple)' : '';
+        });
+    });
+</script>
+
+</body>
+</html>
