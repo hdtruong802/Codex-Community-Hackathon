@@ -1,7 +1,4 @@
 import React from 'react';
-<<<<<<< HEAD
-import SourceFactCheckBox from '@/components/SourceFactCheckBox';
-=======
 import { API_BASE_URL } from '@/utils/api';
 
 const SOURCE_MARKER = '📚';
@@ -28,7 +25,6 @@ const parseContent = (text) => {
     fallbackSource: `${SOURCE_MARKER} ${sourceParts.join(SOURCE_MARKER).trim()}`
   };
 };
->>>>>>> main
 
 export default function ChatMessage({ message, character }) {
   const isUser = message.role === 'user';
@@ -38,22 +34,6 @@ export default function ChatMessage({ message, character }) {
   const color = character?.color || '#8b5cf6';
   const portrait = character?.id ? PORTRAITS[character.id] : null;
 
-<<<<<<< HEAD
-  return (
-    <div className={`chat-message chat-message--${isUser ? 'user' : 'assistant'}`}>
-      <div className="chat-message__row">
-        {!isUser && <div className="chat-message__avatar" aria-hidden="true">{character?.emoji || '?'}</div>}
-        <div
-          className="chat-message__bubble"
-          style={!isUser ? { '--character-color': character?.color || 'var(--accent-purple)' } : undefined}
-        >
-          <div className="chat-message__content">{message.content}</div>
-          {!isUser ? (
-            <SourceFactCheckBox sources={message.sources} color={character?.color || 'var(--accent-purple)'} />
-          ) : null}
-        </div>
-        {isUser && <div className="chat-message__avatar" aria-hidden="true">T</div>}
-=======
   const guardrailLabel = guardrail?.decision === 'block'
     ? 'Đã chặn theo guardrail'
     : 'Đã chuyển hướng về lịch sử';
@@ -150,7 +130,6 @@ export default function ChatMessage({ message, character }) {
             🧑
           </div>
         )}
->>>>>>> main
       </div>
     </div>
   );

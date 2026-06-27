@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-import React, { useState, useRef, useEffect } from 'react';
-import { SendHorizontal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-=======
 import React, { useRef, useEffect } from 'react';
->>>>>>> main
 
 export default function ChatInput({ onSend, placeholder, disabled, characterColor }) {
   const textareaRef = useRef(null);
@@ -37,34 +30,18 @@ export default function ChatInput({ onSend, placeholder, disabled, characterColo
   };
 
   return (
-<<<<<<< HEAD
-    <form onSubmit={handleSubmit} className="chat-input">
-      <Textarea
-=======
     <form ref={formRef} onSubmit={handleSubmit} className="input-form">
       <textarea
->>>>>>> main
         ref={textareaRef}
         rows={1}
         onInput={handleInput}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-<<<<<<< HEAD
-        aria-label="Nhập câu hỏi"
-        className="min-h-10 max-h-[120px] resize-none border-0 bg-transparent px-0 py-2 text-[0.88rem] leading-snug text-foreground shadow-none focus-visible:border-transparent focus-visible:ring-0"
-=======
         className="input-textarea"
->>>>>>> main
       />
-      <Button
+      <button
         type="submit"
-<<<<<<< HEAD
-        size="icon"
-        disabled={!text.trim() || disabled}
-        aria-label="Gửi câu hỏi"
-        title="Gửi câu hỏi"
-=======
         disabled={disabled}
         className="input-send-btn"
         style={
@@ -72,10 +49,21 @@ export default function ChatInput({ onSend, placeholder, disabled, characterColo
             ? { background: characterColor }
             : undefined
         }
->>>>>>> main
       >
-        <SendHorizontal />
-      </Button>
+        <svg
+          viewBox="0 0 24 24"
+          width="16"
+          height="16"
+          stroke="currentColor"
+          strokeWidth="2"
+          fill="none"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <line x1="22" y1="2" x2="11" y2="13" />
+          <polygon points="22 2 15 22 11 13 2 9 22 2" />
+        </svg>
+      </button>
     </form>
   );
 }
