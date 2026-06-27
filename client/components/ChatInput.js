@@ -1,14 +1,17 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 
-export default function ChatInput({ onSend, placeholder, disabled }) {
-  const [text, setText] = useState('');
+export default function ChatInput({ onSend, placeholder, disabled, characterColor }) {
   const textareaRef = useRef(null);
+  const formRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!text.trim() || disabled) return;
-    onSend(text.trim());
-    setText('');
+    const text = textareaRef.current?.value?.trim();
+    if (!text || disabled) return;
+    onSend(text);
+    textareaRef.current.value = '';
+    // Reset height
+    textareaRef.current.style.height = 'auto';
   };
 
   const handleKeyDown = (e) => {
@@ -18,30 +21,34 @@ export default function ChatInput({ onSend, placeholder, disabled }) {
     }
   };
 
-  useEffect(() => {
+  const handleInput = () => {
     // Auto-grow textarea height
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 120)}px`;
     }
-  }, [text]);
+  };
 
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
+    <form ref={formRef} onSubmit={handleSubmit} className="input-form">
       <textarea
         ref={textareaRef}
         rows={1}
-        value={text}
-        onChange={(e) => setText(e.target.value)}
+        onInput={handleInput}
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        style={styles.textarea}
+        className="input-textarea"
       />
       <button
         type="submit"
-        disabled={!text.trim() || disabled}
-        style={styles.button(!text.trim() || disabled)}
+        disabled={disabled}
+        className="input-send-btn"
+        style={
+          !disabled && characterColor
+            ? { background: characterColor }
+            : undefined
+        }
       >
         <svg
           viewBox="0 0 24 24"
@@ -60,44 +67,3 @@ export default function ChatInput({ onSend, placeholder, disabled }) {
     </form>
   );
 }
-
-const styles = {
-  form: {
-    display: 'flex',
-    gap: '0.5rem',
-    background: 'var(--bg-card-alt)',
-    border: '1px solid var(--border)',
-    borderRadius: '12px',
-    padding: '0.5rem 0.75rem',
-    alignItems: 'flex-end',
-    width: '100%'
-  },
-  textarea: {
-    flex: 1,
-    background: 'transparent',
-    border: 'none',
-    outline: 'none',
-    color: 'var(--text-primary)',
-    fontSize: '0.88rem',
-    fontFamily: 'inherit',
-    resize: 'none',
-    padding: '0.4rem 0',
-    maxHeight: '120px',
-    lineHeight: '1.4'
-  },
-  button: (disabled) => ({
-    width: '32px',
-    height: '32px',
-    borderRadius: '8px',
-    background: disabled ? 'rgba(255, 255, 255, 0.05)' : 'var(--accent-purple)',
-    border: 'none',
-    color: disabled ? 'var(--text-muted)' : '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'all 0.2s ease',
-    flexShrink: 0,
-    marginBottom: '2px'
-  })
-};

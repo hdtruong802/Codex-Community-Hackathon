@@ -1,61 +1,28 @@
 import React from 'react';
 
-export default function TypingIndicator({ emoji }) {
+const PORTRAITS = {
+  tran_hung_dao: '/characters/tran_hung_dao.png',
+  ly_thuong_kiet: '/characters/ly_thuong_kiet.png',
+  ho_xuan_huong: '/characters/ho_xuan_huong.png'
+};
+
+export default function TypingIndicator({ emoji, characterId }) {
+  const portrait = characterId ? PORTRAITS[characterId] : null;
+
   return (
-    <div style={styles.container}>
-      <div style={styles.avatar}>{emoji}</div>
-      <div style={styles.bubble}>
-        <div style={{ ...styles.dot, animationDelay: '0s' }}></div>
-        <div style={{ ...styles.dot, animationDelay: '0.2s' }}></div>
-        <div style={{ ...styles.dot, animationDelay: '0.4s' }}></div>
+    <div className="typing-container">
+      <div className="typing-avatar">
+        {portrait ? (
+          <img src={portrait} alt="" />
+        ) : (
+          emoji || '👤'
+        )}
       </div>
-      <style>{`
-        @keyframes bounce {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
-        }
-      `}</style>
+      <div className="typing-bubble">
+        <div className="typing-dot" />
+        <div className="typing-dot" />
+        <div className="typing-dot" />
+      </div>
     </div>
   );
 }
-
-const styles = {
-  container: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '0.75rem',
-    marginBottom: '1rem',
-    alignSelf: 'flex-start',
-    animation: 'fadeIn 0.3s ease'
-  },
-  avatar: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '8px',
-    background: 'rgba(139, 92, 246, 0.1)',
-    border: '1px solid rgba(139, 92, 246, 0.2)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '1.1rem',
-    flexShrink: 0
-  },
-  bubble: {
-    background: 'var(--bg-card)',
-    border: '1px solid var(--border)',
-    borderRadius: '12px',
-    borderTopLeftRadius: '2px',
-    padding: '0.8rem 1rem',
-    display: 'flex',
-    gap: '0.35rem',
-    alignItems: 'center',
-    minHeight: '38px'
-  },
-  dot: {
-    width: '6px',
-    height: '6px',
-    borderRadius: '50%',
-    background: 'var(--text-muted)',
-    animation: 'bounce 1.2s infinite ease-in-out'
-  }
-};

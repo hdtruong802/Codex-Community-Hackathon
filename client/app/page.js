@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import CharacterCard from '@/components/CharacterCard';
 import Disclaimer from '@/components/Disclaimer';
@@ -36,6 +36,80 @@ const STATIC_CHARACTERS = [
   }
 ];
 
+// Floating particle system
+function ParticleCanvas() {
+  const canvasRef = useRef(null);
+  const animationRef = useRef(null);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    // Create particles
+    const particles = [];
+    const COUNT = 50;
+    for (let i = 0; i < COUNT; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3 - 0.15,
+        size: Math.random() * 2 + 0.5,
+        opacity: Math.random() * 0.4 + 0.1,
+        hue: Math.random() > 0.5 ? 260 : 220 // purple or blue
+      });
+    }
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Wrap around
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+
+        // Subtle flicker
+        const flicker = Math.sin(Date.now() * 0.001 + p.x * 0.01) * 0.1;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 70%, 70%, ${p.opacity + flicker})`;
+        ctx.fill();
+
+        // Glow effect
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 70%, 70%, ${(p.opacity + flicker) * 0.15})`;
+        ctx.fill();
+      });
+
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animate();
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      if (animationRef.current) cancelAnimationFrame(animationRef.current);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="particles-canvas" />;
+}
+
 export default function Home() {
   const router = useRouter();
   const [characters, setCharacters] = useState(STATIC_CHARACTERS);
@@ -57,107 +131,69 @@ export default function Home() {
     loadCharacters();
   }, []);
 
-  const handleSelectCharacter = (id) => {
+  const handleSelectCharacter = useCallback((id) => {
     router.push(`/chat/${id}`);
-  };
+  }, [router]);
 
   return (
-    <div className="container" style={styles.container}>
-      {/* HERO SECTION */}
-      <section style={styles.hero}>
-        <div style={styles.heroBadge}>
-          🏆 Track 3: IMPACT to Vietnam · Codex Community Hackathon 2026
+    <>
+      <ParticleCanvas />
+      <div className="container" style={{ paddingBottom: '3rem' }}>
+        {/* HERO SECTION */}
+        <section className="hero">
+          <div className="hero-badge">
+            <span className="hero-badge-dot" />
+            Track 3: IMPACT to Vietnam · Codex Community Hackathon 2026
+          </div>
+
+          <h1 className="hero-title">
+            Trò chuyện cùng{' '}
+            <span className="hero-title-highlight">Nhân vật Lịch sử</span>{' '}
+            Việt Nam
+          </h1>
+
+          <p className="hero-subtitle">
+            Tìm hiểu nguồn cội dân tộc bằng cách đàm đạo với những nhân vật tiêu biểu
+            trên các mặt trận quân sự, chủ quyền và văn học qua mô phỏng trí tuệ nhân tạo.
+          </p>
+
+          <div className="hero-stats">
+            <div className="hero-stat">
+              <span className="hero-stat-value">3</span>
+              <span className="hero-stat-label">Nhân vật</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat-value">AI</span>
+              <span className="hero-stat-label">Trí tuệ nhân tạo</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat-value">RAG</span>
+              <span className="hero-stat-label">Sử liệu chính xác</span>
+            </div>
+          </div>
+        </section>
+
+        <Disclaimer />
+
+        {/* SECTION HEADER */}
+        <div className="section-header">
+          <h2 className="section-title">📜 Chọn nhân vật lịch sử</h2>
+          <p className="section-desc">
+            Nhấp vào nhân vật để bắt đầu hành trình đàm đạo về giữ nước, chủ quyền và văn chương.
+          </p>
         </div>
-        <h1 style={styles.heroTitle}>
-          Trò chuyện cùng <br />
-          <span style={styles.purpleText}>Nhân vật Lịch sử</span> Việt Nam
-        </h1>
-        <p style={styles.heroSub}>
-          Tìm hiểu nguồn cội dân tộc bằng cách đàm đạo với những nhân vật tiêu biểu trên các mặt trận quân sự, chủ quyền và văn học qua mô phỏng trí tuệ nhân tạo.
-        </p>
-      </section>
 
-      <Disclaimer />
-
-      {/* CHARACTER GRID */}
-      <div style={styles.gridHeader}>
-        <h2 style={styles.gridTitle}>📜 Chọn nhân vật lịch sử</h2>
-        <p style={styles.gridDesc}>Nhấp vào nhân vật để bắt đầu hành trình đàm đạo về giữ nước, chủ quyền và văn chương.</p>
+        {/* CHARACTER GRID */}
+        <div className="character-grid">
+          {characters.map((char) => (
+            <CharacterCard
+              key={char.id}
+              character={char}
+              onClick={() => handleSelectCharacter(char.id)}
+            />
+          ))}
+        </div>
       </div>
-
-      <div style={styles.grid}>
-        {characters.map((char) => (
-          <CharacterCard
-            key={char.id}
-            character={char}
-            onClick={() => handleSelectCharacter(char.id)}
-          />
-        ))}
-      </div>
-    </div>
+    </>
   );
 }
-
-const styles = {
-  container: {
-    paddingBottom: '3.5rem'
-  },
-  hero: {
-    padding: '3rem 0 1.5rem',
-    textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: '1rem'
-  },
-  heroBadge: {
-    display: 'inline-flex',
-    padding: '0.35rem 1rem',
-    borderRadius: '100px',
-    background: 'rgba(139, 92, 246, 0.08)',
-    border: '1px solid rgba(139, 92, 246, 0.2)',
-    fontSize: '0.78rem',
-    fontWeight: '600',
-    color: 'var(--accent-purple)',
-    marginBottom: '0.5rem'
-  },
-  heroTitle: {
-    fontSize: '2.5rem',
-    fontWeight: '900',
-    lineHeight: '1.2',
-    letterSpacing: '-0.02em',
-    color: 'var(--text-primary)'
-  },
-  purpleText: {
-    background: 'var(--gradient-main)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent'
-  },
-  heroSub: {
-    fontSize: '1rem',
-    color: 'var(--text-secondary)',
-    maxWidth: '650px',
-    margin: '0 auto',
-    lineHeight: '1.6'
-  },
-  gridHeader: {
-    marginTop: '2rem',
-    marginBottom: '1.5rem'
-  },
-  gridTitle: {
-    fontSize: '1.5rem',
-    fontWeight: '800',
-    letterSpacing: '-0.01em',
-    marginBottom: '0.25rem'
-  },
-  gridDesc: {
-    fontSize: '0.85rem',
-    color: 'var(--text-secondary)'
-  },
-  grid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
-    gap: '1.25rem',
-    marginTop: '1rem'
-  }
-};
