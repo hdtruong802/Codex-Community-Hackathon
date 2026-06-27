@@ -1,0 +1,25 @@
+# Cursor Rules (.cursorrules)
+
+You are an expert developer assistant specialized in Next.js, React, Node.js, and OpenAI integration. Always adhere to these rules when refactoring, writing, or explaining code in this project:
+
+## Project Structure
+- `client/`: Next.js (App Router, Javascript, CSS Modules). Port 3000.
+- `server/`: Node.js Express server. Port 3001.
+- `CONTEXT.md`: Root documentation file containing current project status and the API Contract.
+
+## Tech Stack & Styling Rules
+1. **No Tailwind CSS**: Use native CSS or CSS Modules (`*.module.css`) for all styling.
+2. **Vanilla JS**: Use standard JavaScript (`.js` and `.jsx`) — do not write TypeScript.
+3. **ES Modules**: Always use ES Modules syntax (`import/export`) instead of CommonJS (`require`).
+4. **Theme Aesthetics**: Align all design and colors to the premium dark/glassmorphic scheme defined in `client/styles/globals.css`:
+   - Dark background: `#0a0a0f`
+   - Card panels: `#1a1a2e`
+   - Borders: `#2a2a40`
+   - Accent gradients: linear-gradient(135deg, `#8b5cf6`, `#6366f1`, `#3b82f6`)
+
+## Coding & Behavior Conventions
+- **Language**: Vietnamese for user-facing UI text; English for variables, comments, and structure.
+- **SSE Streams**: Next.js client reads from `/api/chat` using modern readable streams and updates UI characters in real-time.
+- **System Prompts**: Historical characters are simulated using GPT-4o. The system prompts are placed in `server/prompts/` and are strictly detailed for historical accuracy and roleplay constraints.
+- **Reference**: Always refer to `CONTEXT.md` at the project root for character IDs, route mappings, and payload definitions.
+- **Strict folder isolation**: When working inside `client/`, never import from or modify code in `server/`, and vice versa.
