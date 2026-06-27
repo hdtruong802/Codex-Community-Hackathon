@@ -102,13 +102,6 @@ Cần cải tiến:
 
 Hiện tại:
 
-- `ChatMessage` tìm marker `📚` trong text.
-- Phần trước marker là nội dung chính.
-- Phần sau marker hiện như source box nhỏ.
-
-Kỳ vọng theo PRD:
-
 - Assistant response nên có nguồn sử liệu hoặc khuyến nghị tra cứu.
-- Khi backend có RAG structured metadata, frontend nên hiện `source`, `topic`, `confidence`, `timePeriod`.
+- Khi backend có RAG structured metadata, frontend hiện `source`, `topic`, `confidence`, `timePeriod` qua `SourceFactCheckBox`.
 - Không hiện nguồn từ model tự bịa; chỉ hiện nguồn backend/retrieved chunks đã cung cấp.
-

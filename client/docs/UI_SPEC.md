@@ -8,7 +8,7 @@ Màn hình đầu tiên phải giúp người dùng làm được việc chính:
 
 ## Design tokens hiện tại
 
-Tokens nằm trong `client/app/globals.css`.
+Tokens nằm trong `client/app/globals.css`. App dùng shadcn/ui + Tailwind CSS 4, vì vậy token sản phẩm cần được đồng bộ với cả token shadcn như `--background`, `--foreground`, `--card`, `--primary`, `--muted`, `--border`, `--ring`.
 
 | Token | Giá trị | Mục đích |
 | --- | --- | --- |
@@ -21,6 +21,14 @@ Tokens nằm trong `client/app/globals.css`.
 | `--text-secondary` | `#9ca3af` | Text phụ |
 | `--text-muted` | `#6b7280` | Label/empty state |
 | `--accent-purple` | `#8b5cf6` | Accent sản phẩm |
+
+## UI library
+
+- Dùng shadcn/ui làm nền component: `Button`, `Card`, `Badge`, `Alert`, `Textarea`, `ScrollArea`, `Separator` và các component registry khác khi cần.
+- Dùng `lucide-react` cho icon trong button/action.
+- Không tự tạo primitive song song kiểu `Button.js`, `Card.js` nếu shadcn đã có component tương ứng.
+- Khi cần thêm primitive mới, dùng `npx shadcn@latest add <component>` trong `client/`, sau đó import từ `@/components/ui/<component>`.
+- Tùy biến visual bằng Tailwind className và CSS variables; tránh inline style lớn, trừ CSS variable động như `--character-color`.
 
 Màu nhân vật hiện tại:
 
@@ -71,6 +79,7 @@ Quy tắc:
 
 - Toàn card click được.
 - Hover: nâng nhẹ, đổi border theo màu nhân vật, emoji scale nhẹ.
+- Dùng shadcn `Card` làm nền, topic dùng `Badge`.
 - Bio ngắn, không quá 3-4 dòng nếu có thể.
 - Topic chips wrap được và không làm card bị vỡ layout.
 
@@ -87,12 +96,14 @@ Quy tắc:
 - Textarea auto-grow, tối đa 120px.
 - `Enter` gửi, `Shift + Enter` xuống dòng.
 - Send button là icon button, disabled khi rỗng/đang stream.
+- Dùng shadcn `Textarea` và `Button`; icon gửi dùng Lucide nếu có icon phù hợp.
 - Khi đang stream, input disabled để tránh request chen nhau nếu backend chưa hỗ trợ cancel/parallel.
 
 ### Suggested questions
 
 - Chỉ hiện khi chưa có message và không streaming.
 - Dùng chip button nhỏ, wrap được.
+- Dùng shadcn `Button` variant `outline` hoặc `secondary`, không dùng thẻ `span` click được.
 - Click chip gửi ngay câu hỏi.
 - Text chip phải là câu hỏi thật, không phải mô tả tính năng.
 
@@ -107,6 +118,7 @@ Quy tắc:
 - Error phải nói rõ hành động người dùng có thể làm: kiểm tra backend/API key, thử lại.
 - Không expose stack trace hoặc chi tiết secret.
 - Nên thêm retry button khi có `lastFailedMessage`.
+- Dùng shadcn `Alert` cho lỗi/disclaimer để trạng thái nhất quán.
 
 ## Copywriting
 
@@ -138,3 +150,4 @@ Quy tắc:
 - Không để disclaimer biến mất khỏi flow chat.
 - Không hard-code CSS selector sinh từ build hash.
 - Không hiện source/fact-check nếu không có dữ liệu đáng tin.
+- Không thay component shadcn bằng primitive tự dựng chỉ để đổi style nhỏ.

@@ -34,7 +34,7 @@ Nếu thay đổi liên quan PRD hoặc persona, đọc thêm `docs/PRD.md`.
 3. Không làm UI khẳng định AI response là sự thật chính thức.
 4. Không bịa source/fact-check ở frontend.
 5. Không hard-code dữ liệu nhân vật ở nhiều nơi hơn hiện trạng; nếu refactor, gom lại module dùng chung.
-6. Không thêm dependency nếu chưa thật sự cần.
+6. Dùng shadcn/ui + Tailwind CSS 4 làm UI foundation; không tự dựng primitive trùng registry.
 7. Không sửa backend khi nhiệm vụ chỉ yêu cầu frontend, trừ khi user yêu cầu rõ.
 8. Không revert thay đổi không phải của mình.
 
@@ -52,10 +52,13 @@ Thứ tự ưu tiên:
 
 - Bám `UI_SPEC.md`.
 - Dùng dark theme và CSS variables hiện có.
+- Ưu tiên shadcn/ui components trong `client/components/ui/` và Tailwind utility class.
+- Nếu thiếu component UI phổ biến, thêm bằng `npx shadcn@latest add <component>` trong `client/`.
 - Card chỉ dùng cho item, panel, modal hoặc tool surface thật sự.
 - Không thêm landing page dài trước gallery.
 - Không dùng decoration làm lu mờ nhân vật/chat.
 - Button icon cần label accessibility.
+- Icon ưu tiên `lucide-react`.
 - Text tiếng Việt phải có dấu.
 - Không để text tràn khỏi button, chip, card hoặc chat bubble.
 
@@ -66,6 +69,7 @@ Thứ tự ưu tiên:
 - Page chịu trách nhiệm điều hướng và fetch data cấp route.
 - Hook chịu trách nhiệm streaming/network side effects.
 - Nếu component mới dùng nhiều nơi, đặt trong `client/components/`.
+- Nếu component là primitive UI, đặt trong `client/components/ui/` qua shadcn CLI.
 - Nếu logic mới không phụ thuộc UI, đặt trong `client/utils/`.
 
 ## Khi sửa chat/streaming
@@ -107,6 +111,7 @@ Với code:
 ## Các lỗi cần tránh
 
 - Tạo CSS responsive bằng selector hash sinh tự động.
+- Tạo primitive UI giả thay cho component shadcn đã có.
 - Để màn hình loading treo vô hạn khi character ID không tồn tại.
 - Để source box phụ thuộc vào emoji marker nếu backend đã có metadata.
 - Làm suggested questions biến mất khỏi luồng lần đầu.

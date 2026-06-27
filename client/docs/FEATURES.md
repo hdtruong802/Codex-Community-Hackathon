@@ -24,7 +24,7 @@ Trạng thái tính năng được đánh giá dựa trên PRD và source fronte
 | Conversation History | Partial | State nội bộ giữ messages và gửi lên API; chưa persist khi reload/chuyển trang. |
 | Clear Conversation | Done | Nút xóa hội thoại reset local state. |
 | Disclaimer | Done | Có banner ở trang chủ và sidebar chat. |
-| Source/Fact-Check Box | Partial | `ChatMessage` tách source bằng marker `📚`; chưa có component source structured theo metadata. |
+| Source/Fact-Check Box | Partial | Có `SourceFactCheckBox` nhận `message.sources` structured; backend cần trả metadata nguồn thật để hiển thị đầy đủ. |
 | Error State | Partial | Có error box khi API lỗi; chưa có nút retry riêng. |
 | API fallback | Done | Gallery/chat fallback sang static characters khi backend character API lỗi. |
 | RAG MVP | Planned | Thuộc backend; frontend chưa có debug source/retrieval view. |
@@ -46,7 +46,7 @@ Trạng thái tính năng được đánh giá dựa trên PRD và source fronte
 ## Ưu tiên tiếp theo cho frontend
 
 1. Tách inline styles thành component styles hoặc CSS modules để responsive ổn định hơn.
-2. Tạo `SourceFactCheckBox` nhận structured metadata thay vì parse marker `📚`.
+2. Đồng bộ backend để trả `sources` structured cho `SourceFactCheckBox`.
 3. Thêm retry action cho lỗi chat.
 4. Đồng bộ danh sách nhân vật với PRD/backend, đặc biệt việc chọn Hồ Xuân Hương hay Nguyễn Thị Bình.
 5. Thêm About/Impact page nếu cần cho demo pitch.

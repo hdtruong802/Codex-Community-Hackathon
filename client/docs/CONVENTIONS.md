@@ -15,8 +15,10 @@ Tài liệu này quy định coding style, naming, import, commit và cách tổ
 
 - Route đặt trong `client/app/`.
 - Component dùng lại đặt trong `client/components/`.
+- Component shadcn/ui registry đặt trong `client/components/ui/`, import bằng lowercase path như `@/components/ui/button`.
 - Hook đặt trong `client/hooks/` và bắt đầu bằng `use`.
 - Helper không phụ thuộc UI đặt trong `client/utils/`.
+- Utility chung của shadcn đặt trong `client/lib/utils.js`.
 - Tài liệu frontend đặt trong `client/docs/`.
 - Không thêm thư mục mới nếu chưa có nhu cầu rõ ràng.
 
@@ -31,6 +33,7 @@ Tài liệu này quy định coding style, naming, import, commit và cách tổ
 | Constants | UPPER_SNAKE_CASE hoặc rõ nghĩa theo scope | `API_BASE_URL`, `STATIC_CHARACTERS` |
 | Route segment | lowercase/kebab hoặc dynamic segment | `chat/[id]` |
 | CSS variables | kebab-case | `--bg-primary` |
+| shadcn component file | lowercase | `components/ui/button.jsx` |
 
 ## Import
 
@@ -45,6 +48,7 @@ Ví dụ:
 import useChat from '@/hooks/useChat';
 import ChatMessage from '@/components/ChatMessage';
 import { getCharacters } from '@/utils/api';
+import { Button } from '@/components/ui/button';
 ```
 
 ## Component style
@@ -59,15 +63,18 @@ import { getCharacters } from '@/utils/api';
 
 ## Styling
 
-Hiện tại code dùng nhiều inline styles. Khi chỉnh tiếp:
+Frontend dùng shadcn/ui + Tailwind CSS 4 làm nền UI. Khi chỉnh tiếp:
 
-- Giữ thay đổi nhỏ theo style hiện có nếu đang sửa hẹp.
-- Với layout/responsive phức tạp, ưu tiên CSS module hoặc className ổn định.
+- Ưu tiên shadcn/ui components trong `components/ui/*` cho button, card, alert, badge, textarea, separator, scroll area và các primitive tương tự.
+- Nếu cần component shadcn mới, chạy `npx shadcn@latest add <component>` trong `client/` thay vì tự dựng primitive riêng.
+- Dùng Tailwind utility trong `className` cho spacing, layout, responsive, state và icon sizing.
+- Dùng CSS custom trong `globals.css` cho design tokens, layout lớn hoặc responsive class dùng chung.
 - Không hard-code selector sinh từ build hash.
-- Dùng CSS variables trong `globals.css` cho màu nền, text, border và accent.
+- Dùng CSS variables trong `globals.css` cho màu nền, text, border, accent và shadcn tokens `--background`, `--foreground`, `--card`, `--primary`, `--muted`, `--border`, `--ring`.
 - Màu nhân vật nên lấy từ data `character.color`, không hard-code trong component nếu đã có dữ liệu.
 - Không dùng text quá lớn trong panel/chat compact.
 - Đảm bảo mobile 320px không tràn ngang.
+- Không tạo component UI giả tên `Button.js`, `Card.js`... nếu shadcn đã có component tương ứng.
 
 ## JavaScript/React
 
@@ -76,7 +83,8 @@ Hiện tại code dùng nhiều inline styles. Khi chỉnh tiếp:
 - Không bỏ qua lỗi network im lặng; phải có error state hoặc fallback.
 - Dọn `AbortController` khi component unmount cho request streaming.
 - Không tạo request song song nếu UI chưa có cancel/queue rõ ràng.
-- Không thêm dependency mới nếu có thể giải quyết bằng API sẵn có của React/Next.
+- Không thêm dependency mới nếu có thể giải quyết bằng API sẵn có của React/Next hoặc shadcn registry hiện có.
+- Dependency UI đã có: `shadcn`, Tailwind CSS 4, `@base-ui/react`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`, `tw-animate-css`.
 
 ## API và streaming
 
@@ -124,4 +132,3 @@ Với thay đổi frontend:
 - Chạy `npm run lint` trong `client/` nếu khả thi.
 - Nếu có thay đổi UI, chạy app và kiểm tra desktop/mobile.
 - Kiểm tra luồng `/ -> /chat/[id] -> gửi câu hỏi -> streaming/error`.
-

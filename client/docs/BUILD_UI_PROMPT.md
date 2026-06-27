@@ -26,6 +26,14 @@ Mục tiêu:
 
 Build giao diện MVP cho Sử Việt AI, một web app cho phép người dùng chọn nhân vật lịch sử Việt Nam và trò chuyện với persona AI được mô phỏng có trách nhiệm.
 
+UI foundation bắt buộc:
+
+- Dùng shadcn/ui + Tailwind CSS 4 trong `client/`.
+- Import primitive từ `@/components/ui/...`, ví dụ `Button`, `Card`, `Badge`, `Alert`, `Textarea`.
+- Nếu thiếu primitive phổ biến, thêm bằng `npx shadcn@latest add <component>` trong `client/`.
+- Dùng `lucide-react` cho icon trong action/button.
+- Không tự tạo UI primitive trùng shadcn như `Button.js`, `Card.js`, `Alert.js`.
+
 Luồng sản phẩm bắt buộc:
 
 `Gallery -> Context -> Chat -> Learn`
@@ -114,7 +122,9 @@ Edge cases phải xử lý:
 Design rules:
 
 - Bám `client/docs/UI_SPEC.md` như design system hiện tại.
+- Dùng shadcn/ui cho primitive component và Tailwind utility cho spacing/layout/state.
 - Dùng CSS variables trong `client/app/globals.css`: `--bg-primary`, `--bg-secondary`, `--bg-card`, `--bg-card-alt`, `--border`, `--text-primary`, `--text-secondary`, `--text-muted`, `--accent-purple`.
+- Đồng bộ với shadcn tokens trong `globals.css`: `--background`, `--foreground`, `--card`, `--primary`, `--muted`, `--border`, `--ring`.
 - Dùng màu nhân vật từ data `character.color`, không hard-code trong component nếu dữ liệu đã có.
 - Dark theme trang trọng, gần gũi, phục vụ học lịch sử qua đối thoại.
 - Không thêm landing page marketing dài trước gallery.
@@ -139,6 +149,7 @@ Implementation rules:
 - Bám cấu trúc Next.js App Router hiện tại trong `client/`.
 - Ưu tiên sửa scoped files liên quan.
 - Không thêm dependency nếu chưa thật sự cần.
+- Không thay shadcn bằng primitive tự dựng; nếu cần component mới, dùng shadcn CLI.
 - Không sửa backend nếu nhiệm vụ chỉ yêu cầu UI.
 - Không phá streaming flow hiện có trong `useChat`.
 - Không xóa disclaimer.
@@ -203,6 +214,7 @@ Luôn yêu cầu:
 
 - Đọc `client/docs/UI_SPEC.md`.
 - Dùng design tokens trong `client/app/globals.css`.
+- Dùng shadcn/ui components thay vì tự dựng primitive.
 - Dùng `character.color` từ data.
 - Giữ dark theme, typography, spacing và copywriting thống nhất.
 

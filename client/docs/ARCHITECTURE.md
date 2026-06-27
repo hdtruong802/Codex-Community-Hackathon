@@ -22,7 +22,9 @@ Luồng trải nghiệm chính:
 | --- | --- | --- |
 | Framework | Next.js 16 | Dùng App Router trong `client/app/`. |
 | UI runtime | React 19 | Component hiện tại chủ yếu là function components. |
-| Styling | Inline styles + `globals.css` | Chưa có design system tách riêng. |
+| UI library | shadcn/ui | Cấu hình qua `components.json`, component registry nằm trong `client/components/ui/`. |
+| Styling | Tailwind CSS 4 + `globals.css` | Tailwind/PostCSS ở `tailwind.config.js` và `postcss.config.mjs`; token dark theme nằm trong `globals.css`. |
+| Icons | `lucide-react` | Dùng icon Lucide trong button/action thay vì tự vẽ SVG nếu có icon phù hợp. |
 | Lint | ESLint 9 + `eslint-config-next` | Chạy bằng `npm run lint` trong `client/`. |
 | API | Fetch browser API | `GET /api/characters`, `POST /api/chat`. |
 | Streaming | `ReadableStream` + SSE line parsing | Logic nằm trong `hooks/useChat.js`. |
@@ -40,6 +42,13 @@ client/
       [id]/
         page.js
   components/
+    ui/
+      button.jsx
+      card.jsx
+      badge.jsx
+      alert.jsx
+      textarea.jsx
+      ...
     CharacterCard.js
     ChatInput.js
     ChatMessage.js
@@ -62,6 +71,12 @@ client/
   public/
   utils/
     api.js
+    mockData.js
+  lib/
+    utils.js
+  components.json
+  postcss.config.mjs
+  tailwind.config.js
   eslint.config.mjs
   jsconfig.json
   next.config.mjs
@@ -77,17 +92,20 @@ Chứa routes và styles cấp app.
 - `app/page.js`: trang chủ, hero, disclaimer, gallery nhân vật.
 - `app/chat/[id]/page.js`: trang chat theo nhân vật, fetch character detail, quản lý layout chat.
 - `app/layout.js`: metadata và root layout.
-- `app/globals.css`: CSS variables, reset, utility `.container`, animation và responsive global.
+- `app/globals.css`: Tailwind import, shadcn CSS variables, product design tokens, reset, utility `.container`, animation và responsive global.
 - `app/page.module.css`: còn mang dấu vết template Next.js, hiện chưa phải nguồn styling chính.
 
 ### `components/`
 
 Chứa UI components dùng lại. Component nên nhận dữ liệu qua props và hạn chế tự gọi API.
 
+- `components/ui/*`: shadcn/ui components được tạo bằng CLI. Không sửa API public tùy tiện; nếu cần thêm component mới, ưu tiên `npx shadcn@latest add <component>`.
 - `CharacterCard`: card chọn nhân vật ở gallery.
 - `ChatInput`: textarea auto-grow và nút gửi.
-- `ChatMessage`: render user/assistant bubble, tách source bằng marker `📚`.
+- `ChatMessage`: render user/assistant bubble và chuyển metadata nguồn cho `SourceFactCheckBox`.
+- `CharacterContext`: sidebar context nhân vật trong chat.
 - `Disclaimer`: cảnh báo AI mô phỏng.
+- `SourceFactCheckBox`: hiển thị metadata nguồn structured nếu backend trả về.
 - `SuggestedQuestions`: chip câu hỏi gợi ý.
 - `TypingIndicator`: trạng thái chờ chunk đầu tiên.
 
@@ -102,6 +120,7 @@ Chứa logic client-side có state/side effect phức tạp.
 Chứa helper không phụ thuộc UI.
 
 - `api.js`: cấu hình `API_BASE_URL`, lấy danh sách nhân vật và tìm chi tiết nhân vật.
+- `mockData.js`: fallback nhân vật dùng chung khi backend lỗi/rỗng.
 
 ### `docs/`
 
@@ -179,15 +198,13 @@ Nếu có lỗi, frontend có thể đọc `{"error":"..."}` từ event hoặc x
 | --- | --- | --- |
 | Danh sách characters trang chủ | `app/page.js` | Có fallback static. |
 | Character detail trang chat | `app/chat/[id]/page.js` | Có fallback static. |
-| Messages/currentResponse/error | `hooks/useChat.js` | Không persist sau reload. |
+| Messages/currentResponse/currentSources/error/lastFailedMessage | `hooks/useChat.js` | Không persist sau reload; có retry local cho message lỗi gần nhất. |
 | Hover state card/chip | Component tương ứng | Local UI state. |
 | API base URL | `utils/api.js` | Lấy từ `NEXT_PUBLIC_API_URL`. |
 
 ## Điểm kiến trúc cần cải thiện
 
-1. Tách inline styles lớn thành CSS module hoặc component styles có className ổn định.
-2. Không inject CSS bằng selector build hash trong chat page.
-3. Tạo component `SourceFactCheckBox` để nhận metadata nguồn structured.
-4. Tách static character fallback thành module dùng chung thay vì lặp trong page.
-5. Thêm not-found state cho character ID không hợp lệ.
-6. Thêm retry flow cho lỗi chat.
+1. Tiếp tục giảm CSS custom khi shadcn/Tailwind utility đã đủ rõ.
+2. Dùng thêm shadcn components qua CLI nếu cần mở rộng UI, ví dụ `dialog`, `sheet`, `tabs`, `tooltip`.
+3. Đồng bộ contract nguồn structured với backend để `SourceFactCheckBox` hiển thị dữ liệu thật hơn.
+4. Kiểm tra visual bằng browser/screenshot sau mỗi thay đổi UI lớn.

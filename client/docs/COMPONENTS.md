@@ -8,9 +8,27 @@ Thư mục chính:
 
 - `client/app/`: routes và global styles.
 - `client/components/`: UI components dùng lại.
+- `client/components/ui/`: shadcn/ui registry components.
 - `client/hooks/`: client-side state và side effects.
 - `client/utils/`: API helpers.
+- `client/lib/`: utility chung, hiện có `cn()` cho shadcn/Tailwind class merging.
 - `client/docs/`: tài liệu chỉ dẫn frontend.
+
+## UI foundation
+
+Frontend dùng shadcn/ui thật, không dùng primitive tự dựng song song.
+
+- Cấu hình shadcn nằm trong `client/components.json`.
+- Tailwind CSS 4 cấu hình qua `client/tailwind.config.js`, `client/postcss.config.mjs` và `client/app/globals.css`.
+- Components registry hiện có: `button`, `card`, `badge`, `alert`, `textarea`, `scroll-area`, `separator`.
+- Khi cần primitive mới, chạy trong `client/`: `npx shadcn@latest add <component>`.
+- Import chuẩn:
+
+```js
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+```
 
 ## Routes
 
@@ -40,9 +58,12 @@ Trả về:
 
 - `messages`: lịch sử local của hội thoại.
 - `currentResponse`: nội dung assistant đang stream.
+- `currentSources`: metadata nguồn structured đang stream nếu backend trả.
 - `isStreaming`: trạng thái đang gọi API.
 - `error`: lỗi hiện tại.
+- `lastFailedMessage`: câu hỏi gần nhất bị lỗi, dùng cho retry.
 - `sendMessage(text)`: gửi user message.
+- `retryLastMessage()`: gửi lại câu hỏi lỗi gần nhất.
 - `clearHistory()`: reset hội thoại.
 
 Hành vi:
@@ -52,8 +73,9 @@ Hành vi:
 3. Đọc stream bằng `response.body.getReader()`.
 4. Parse từng dòng `data: ...`.
 5. Cộng dồn `parsed.text` vào `currentResponse`.
-6. Khi `[DONE]`, thêm assistant message vào `messages`.
-7. Abort request khi component unmount.
+6. Nếu stream có `sources` hoặc `metadata.sources`, lưu vào `currentSources`.
+7. Khi `[DONE]`, thêm assistant message vào `messages` kèm `sources` nếu có.
+8. Abort request khi component unmount.
 
 Quy ước khi sửa:
 
@@ -131,12 +153,9 @@ Props:
 Hành vi hiện tại:
 
 - User canh phải, assistant canh trái.
-- Parse marker `📚` để tách source/fact-check.
+- Source/fact-check chỉ hiện qua `message.sources`.
 
-Cần nâng cấp:
-
-- Thay `parseContent` bằng props structured, vì marker text dễ gây lỗi nếu model sinh emoji ngoài ý muốn.
-- Đề xuất shape mới:
+Shape nguồn structured:
 
 ```js
 {
@@ -152,6 +171,38 @@ Cần nâng cấp:
   ]
 }
 ```
+
+### `SourceFactCheckBox`
+
+Props:
+
+- `sources`: mảng metadata structured từ backend/RAG.
+- `color`: màu nhân vật.
+
+Trách nhiệm:
+
+- Hiển thị `source`, `topic`, `confidence`, `timePeriod` nếu có.
+- Không bịa nguồn ở frontend.
+- Không hiện box nếu không có dữ liệu structured.
+
+### `CharacterContext`
+
+Props:
+
+- `character`: character data.
+- `onReset`: handler xóa hội thoại.
+
+Trách nhiệm:
+
+- Hiển thị avatar, tên, thời kỳ, bio, topic chips, achievement/context list.
+- Dùng shadcn `Card`, `Badge`, `Button`.
+
+### `NotFoundCharacter`
+
+Trách nhiệm:
+
+- Hiển thị state khi character ID không tồn tại sau API và fallback.
+- Có action về trang chủ, không để loading treo.
 
 ### `TypingIndicator`
 
@@ -194,7 +245,7 @@ Message hiện tại:
 }
 ```
 
-Message đề xuất khi có RAG/source structured:
+Message khi có RAG/source structured:
 
 ```js
 {
@@ -212,13 +263,10 @@ Message đề xuất khi có RAG/source structured:
 3. Hook giữ side effect phức tạp như streaming chat.
 4. Character color là dữ liệu sản phẩm, không hard-code trong component nếu đã có trong data.
 5. Mỗi component có state hover/focus riêng nên đảm bảo keyboard/focus tương đương.
-6. Nếu thêm CSS, ưu tiên className ổn định/CSS module thay vì inject style theo selector build hash.
+6. Ưu tiên shadcn/ui + Tailwind utility; dùng `globals.css` cho token/layout chung thay vì inline style lớn.
 7. Không để UI phụ thuộc vào backend thành công nếu có fallback cần cho demo.
+8. Không tạo primitive trùng với shadcn registry nếu có thể thêm bằng CLI.
 
 ## Component cần thêm theo PRD
 
-- `SourceFactCheckBox`: hiện sources/độ tin cậy/có dữ liệu hay không.
-- `CharacterContext`: hiện period, achievements, topics, suggested questions ngoài sidebar nếu cần.
-- `RetryMessageButton`: gửi lại message bị lỗi.
-- `NotFoundCharacter`: khi route ID không hợp lệ.
 - `HealthStatus` hoặc debug-only status cho demo nội bộ.

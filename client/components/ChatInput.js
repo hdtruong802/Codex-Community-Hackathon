@@ -1,4 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { SendHorizontal } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function ChatInput({ onSend, placeholder, disabled }) {
   const [text, setText] = useState('');
@@ -27,8 +30,8 @@ export default function ChatInput({ onSend, placeholder, disabled }) {
   }, [text]);
 
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
-      <textarea
+    <form onSubmit={handleSubmit} className="chat-input">
+      <Textarea
         ref={textareaRef}
         rows={1}
         value={text}
@@ -36,68 +39,18 @@ export default function ChatInput({ onSend, placeholder, disabled }) {
         onKeyDown={handleKeyDown}
         placeholder={placeholder}
         disabled={disabled}
-        style={styles.textarea}
+        aria-label="Nhập câu hỏi"
+        className="min-h-10 max-h-[120px] resize-none border-0 bg-transparent px-0 py-2 text-[0.88rem] leading-snug text-foreground shadow-none focus-visible:border-transparent focus-visible:ring-0"
       />
-      <button
+      <Button
         type="submit"
+        size="icon"
         disabled={!text.trim() || disabled}
-        style={styles.button(!text.trim() || disabled)}
+        aria-label="Gửi câu hỏi"
+        title="Gửi câu hỏi"
       >
-        <svg
-          viewBox="0 0 24 24"
-          width="16"
-          height="16"
-          stroke="currentColor"
-          strokeWidth="2"
-          fill="none"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <line x1="22" y1="2" x2="11" y2="13" />
-          <polygon points="22 2 15 22 11 13 2 9 22 2" />
-        </svg>
-      </button>
+        <SendHorizontal />
+      </Button>
     </form>
   );
 }
-
-const styles = {
-  form: {
-    display: 'flex',
-    gap: '0.5rem',
-    background: 'var(--bg-card-alt)',
-    border: '1px solid var(--border)',
-    borderRadius: '12px',
-    padding: '0.5rem 0.75rem',
-    alignItems: 'flex-end',
-    width: '100%'
-  },
-  textarea: {
-    flex: 1,
-    background: 'transparent',
-    border: 'none',
-    outline: 'none',
-    color: 'var(--text-primary)',
-    fontSize: '0.88rem',
-    fontFamily: 'inherit',
-    resize: 'none',
-    padding: '0.4rem 0',
-    maxHeight: '120px',
-    lineHeight: '1.4'
-  },
-  button: (disabled) => ({
-    width: '32px',
-    height: '32px',
-    borderRadius: '8px',
-    background: disabled ? 'rgba(255, 255, 255, 0.05)' : 'var(--accent-purple)',
-    border: 'none',
-    color: disabled ? 'var(--text-muted)' : '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: disabled ? 'not-allowed' : 'pointer',
-    transition: 'all 0.2s ease',
-    flexShrink: 0,
-    marginBottom: '2px'
-  })
-};
